@@ -3,6 +3,8 @@
 🌙 音乐疗愈AI系统 - 统一后端API服务器
 整合AC（情感计算）、KG（知识图谱）、MI_retrieve（音乐检索）三大模块
 为前端提供RESTful API接口
+
+本地部署版本，不使用R2存储桶
 """
 
 import os
@@ -591,46 +593,37 @@ def search_music_with_progress():
                 top_k=max_results
             )
             
-
-
-
-            # vvvvvv 从这里开始复制，用来替换原来的 if result["success"]: 及其内部代码 vvvvvv
             if result["success"]:
-                # 1. 直接使用您提供的R2公共URL
-                R2_PUBLIC_URL = "https://pub-263b71ccbad648af97436d9666ca337e.r2.dev"
-
                 segments = []
                 for item in result.get("results", []):
+                    # 构建视频路径
                     video_name = item['video_name']
+                    # 根据duration构建完整路径
                     video_filename = f"{video_name}.mp4"
-
-                    # 2. 构建视频在R2存储桶中的相对路径
-                    relative_video_path = f"segments_{duration}/{video_filename}"
-
-                    # 3. 拼接成一个完整的、可公开访问的R2视频URL
-                    full_r2_url = f"{R2_PUBLIC_URL}/{relative_video_path}"
-
+                    video_path = f"segments_{duration}/{video_filename}"
+                    
                     segments.append({
                         "id": f"segment_{video_name}_{duration}",
                         "title": video_name,
                         "artist": "疗愈音乐库",
                         "duration": _parse_duration(duration),
-                        "url": full_r2_url,  # <-- 核心修改：使用完整的R2 URL
-                        "video_path": relative_video_path,
+                        "url": video_path,
+                        "video_path": video_path,
                         "matchScore": float(item['similarity'])
                     })
-
+                
                 yield f"data: {json.dumps({'step': 'music_retrieval', 'status': 'completed', 'message': f'检索完成，找到 {len(segments)} 首匹配音乐', 'progress': 90})}\n\n"
                 time.sleep(0.5)
-
+                
+                # 步骤4: 准备播放
                 yield f"data: {json.dumps({'step': 'preparation', 'status': 'processing', 'message': '正在准备疗愈音乐...', 'progress': 95})}\n\n"
                 time.sleep(0.5)
-
+                
+                # 最终结果
                 yield f"data: {json.dumps({'step': 'completed', 'status': 'success', 'message': '准备就绪，即将开始音乐疗愈', 'progress': 100, 'data': {'segments': segments}})}\n\n"
-            # ^^^^^^ 到这里复制结束 ^^^^^^
-
-
-            
+            else:
+                yield f"data: {json.dumps({'step': 'error', 'status': 'failed', 'message': result.get('error', '音乐检索失败'), 'progress': 0})}\n\n"
+                
         except Exception as e:
             logger.error(f"进度反馈错误: {e}")
             yield f"data: {json.dumps({'step': 'error', 'status': 'failed', 'message': str(e), 'progress': 0})}\n\n"
@@ -643,6 +636,45 @@ def search_music_with_progress():
 
 # ==================== 视频流端点 ====================
 
+@app.route('/api/video/<path:video_path>')
+def stream_video(video_path):
+    """提供视频文件流"""
+    try:
+        # 安全检查：确保路径不包含危险字符
+        if '..' in video_path or video_path.startswith('/'):
+            return jsonify(create_api_response(False, error="Invalid video path")), 400
+        
+        # 如果是绝对路径，直接使用
+        if video_path.startswith('/'):
+            full_path = video_path
+        else:
+            # 尝试多个可能的路径
+            possible_paths = [
+                os.path.join(os.path.dirname(__file__), 'MI_retrieve', 'retrieve_libraries', video_path),
+                os.path.join(os.path.dirname(__file__), video_path),
+                os.path.join(os.path.dirname(__file__), 'materials', video_path),
+                video_path  # 如果已经是完整路径
+            ]
+            
+            full_path = None
+            for path in possible_paths:
+                logger.info(f"尝试路径: {path}")
+                if os.path.exists(path):
+                    full_path = path
+                    logger.info(f"找到视频文件: {path}")
+                    break
+            
+            if not full_path:
+                logger.error(f"视频文件不存在: {video_path}")
+                logger.error(f"尝试的路径: {possible_paths}")
+                return jsonify(create_api_response(False, error=f"Video not found: {video_path}")), 404
+        
+        # 返回视频文件
+        return send_file(full_path, mimetype='video/mp4')
+        
+    except Exception as e:
+        logger.error(f"视频流错误: {e}")
+        return jsonify(create_api_response(False, error=str(e))), 500
 
 # ==================== 错误处理 ====================
 
