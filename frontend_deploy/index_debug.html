@@ -733,10 +733,12 @@
     </style>
     
     <!-- 🌍 Global API Configuration -->
-    
+    <script src="config.js"></script>
 </head>
 <body>
-    <!-- Queen Mary Header -->
+    <div id="debug-log" style="position: fixed; bottom: 0; left: 0; width: 100%; max-height: 25vh; overflow-y: scroll; background: rgba(0,0,0,0.7); color: #00ff00; font-family: monospace; font-size: 12px; padding: 10px; z-index: 9999; white-space: pre-wrap; word-wrap: break-word; pointer-events: none;">
+        -- 调试日志 --<br>
+    </div>
     <div class="qmul-header">
         <div class="qmul-logo">Queen Mary University of London</div>
         <div class="qmul-subtitle">School of Electronic Engineering and Computer Science</div>
@@ -1559,15 +1561,11 @@
             completed: false
         };
 
-        // vvvvvv 从这里开始替换 vvvvvv
-        // API configuration - 直接在此处硬编码
+        // API configuration - 使用全局配置
         const API_CONFIG = {
-            dataCollectionUrl: "https://e5c21bcb9eb0.ngrok-free.app", // 数据收集服务器
-            emotionApiUrl: "https://eb39c261f0a0.ngrok-free.app"   // 情感分析服务器
+            dataCollectionUrl: window.EXPERIMENT_CONFIG?.apiBaseUrl || 'http://127.0.0.1:5002',
+            emotionApiUrl: window.EXPERIMENT_CONFIG?.emotionApiUrl || 'http://127.0.0.1:5001'
         };
-        // ^^^^^^ 到这里替换结束 ^^^^^^
-
-        
         
         // 调试信息
         console.log('🔧 API Configuration Loaded:');
@@ -1809,17 +1807,35 @@
 
 
 
-        
+        // vvvvvv 从这里开始复制 vvvvvv
+
+        // 新增一个函数，用于在屏幕上打印日志
+        function logToScreen(message) {
+            const logContainer = document.getElementById('debug-log');
+            if (logContainer) {
+                // 将对象或错误转换为可读的字符串
+                let formattedMessage = message;
+                if (typeof message === 'object') {
+                    formattedMessage = JSON.stringify(message, Object.getOwnPropertyNames(message));
+                }
+                logContainer.innerHTML += `${new Date().toLocaleTimeString()}: ${formattedMessage}<br>`;
+                logContainer.scrollTop = logContainer.scrollHeight; // 自动滚动到底部
+            }
+            console.log(message); // 同时也在控制台打印
+        }
+
         async function fetchMusic(emotion) {
-            // 【核心修正】: 调用正确的、带进度反馈的流式API端点
+            logToScreen('1. fetchMusic 函数启动...');
+            
             const API_ENDPOINT = `${API_CONFIG.emotionApiUrl}/api/music/search-with-progress`;
+            logToScreen(`2. 准备请求API: ${API_ENDPOINT}`);
 
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'text/event-stream' // 明确告诉服务器我们需要事件流
+                        'Accept': 'text/event-stream'
                     },
                     body: JSON.stringify({
                         query: emotion,
@@ -1829,24 +1845,26 @@
                         }
                     })
                 });
+                logToScreen('3. fetch 请求已发送，等待响应...');
 
                 if (!response.ok) {
+                    logToScreen(`错误: 网络响应不成功，状态码: ${response.status}`);
                     throw new Error(`网络响应错误: ${response.status}`);
                 }
+                logToScreen('4. 网络响应成功，准备读取数据流...');
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder('utf-8');
                 
-                // 循环读取服务器发送的事件流数据
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) {
-                        console.log('数据流结束');
+                        logToScreen('7. 数据流读取完成。');
                         break;
                     }
                     
+                    logToScreen('5. 收到一块数据流...');
                     const chunk = decoder.decode(value);
-                    // 服务器可能一次发送多个事件，用'\n\n'分割
                     const lines = chunk.split('\n\n').filter(line => line.trim() !== '');
 
                     for (const line of lines) {
@@ -1854,41 +1872,43 @@
                             const jsonData = line.substring(6);
                             try {
                                 const data = JSON.parse(jsonData);
+                                logToScreen(`6. 解析数据成功: step=${data.step}, status=${data.status}`);
                                 
-                                // 更新UI上的进度信息
                                 document.getElementById('feedback-text').innerText = data.message || '正在处理...';
 
                                 if (data.step === 'completed' && data.status === 'success') {
-                                    // 【核心修正】: 当流程完成时，直接使用后端返回的完整视频URL
                                     if (data.data?.segments?.length > 0) {
                                         const videoSegment = data.data.segments[0];
-                                        const finalVideoUrl = videoSegment.url; // 后端已经拼接好了完整的R2 URL
+                                        const finalVideoUrl = videoSegment.url;
 
-                                        console.log('成功获取到最终的视频URL:', finalVideoUrl);
+                                        logToScreen('8. 流程成功结束！准备调用 showVideoPhase');
                                         studyData.therapyData.selectedMusic = videoSegment;
                                         
-                                        // 传递正确的URL给视频播放阶段
                                         showVideoPhase(finalVideoUrl);
                                     } else {
+                                        logToScreen('错误: 流程结束，但未找到音乐片段。');
                                         handleTherapyError(translations[currentLanguage].noMusicFound);
                                     }
                                 } else if (data.step === 'error') {
+                                    logToScreen(`错误: 后端返回错误: ${data.message}`);
                                     handleTherapyError(data.message || '后端处理失败');
                                 }
                             } catch (e) {
-                                console.error('解析JSON失败:', jsonData, e);
+                                logToScreen(`错误: 解析JSON失败: ${e.message}`);
                             }
                         }
                     }
                 }
 
             } catch (error) {
-                console.error('Fetch Music 错误:', error);
+                logToScreen(`致命错误: fetchMusic 函数在 catch 中捕获到错误: ${error.message}`);
                 handleTherapyError(translations[currentLanguage].connectionError);
             }
         }
 
-// ^^^^^^ 到这里复制结束 ^^^^^^
+// ^^^^^^ 到这里复制结束 ^^^^^^        
+
+        
 
 
         

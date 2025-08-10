@@ -1105,10 +1105,13 @@
 
                 <!-- 视频播放阶段 -->
                 <div class="video-section" id="video-section">
-                    <div class="video-container">
-                        <video id="video-player" controls preload="auto"></video>
-                    </div>
-                </div>
+                    <div class="video-container" style="position: relative;"> <video id="video-player" controls preload="auto"></video>
+                        
+                        <button id="manual-play-btn" class="therapy-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; display: none;">
+                            <span data-zh="▶ 播放疗愈音乐" data-en="▶ Play Healing Music">▶ 播放疗愈音乐</span>
+                        </button>
+                        </div>
+                </div> 
             </div>
         </div>
 
@@ -1745,34 +1748,42 @@
             document.getElementById('breathing-hint').style.display = 'block';
             document.getElementById('loading-spinner').style.display = 'block';
         }
+        
 
+        // vvvvvv 从这里开始复制，用来替换掉您原来的整个 showVideoPhase 函数 vvvvvv
         function showVideoPhase(videoUrl) {
             document.getElementById('breathing-circle').style.display = 'none';
             document.getElementById('breathing-hint').style.display = 'none';
             document.getElementById('loading-spinner').style.display = 'none';
             
             const video = document.getElementById('video-player');
-            video.preload = 'auto';
+            const playBtn = document.getElementById('manual-play-btn');
+            const videoSection = document.getElementById('video-section');
             
-            video.onloadedmetadata = () => {
-                console.log('视频元数据加载完成');
-                if (video.duration > 3) {
-                    video.currentTime = 0.1;
-                }
-            };
+            video.src = videoUrl;
+            video.preload = 'auto'; // 让浏览器开始加载视频
             
+            // 当视频数据足以开始播放时
             video.oncanplay = () => {
-                console.log('视频可以播放');
-                const videoSection = document.getElementById('video-section');
+                console.log('视频已准备好，可以播放');
+                
+                // 显示视频区域和我们新增的播放按钮
                 videoSection.style.display = 'block';
+                playBtn.style.display = 'block';
+                updateLanguageContent(); // 确保按钮上的文字是正确的语言
                 
                 setTimeout(() => {
                     videoSection.style.opacity = '1';
-                    video.play().catch(e => console.log('需要用户手动播放'));
                 }, 100);
             };
+
+            // 【核心修正】为新的播放按钮添加点击事件
+            playBtn.onclick = () => {
+                video.play();
+                playBtn.style.display = 'none'; // 用户点击后，隐藏播放按钮
+            };
             
-            // Listen for video end
+            // 监听视频播放结束事件 (这部分逻辑不变)
             video.onended = () => {
                 console.log('视频播放完成');
                 studyData.therapyData.completed = true;
@@ -1780,19 +1791,31 @@
                 
                 setTimeout(() => {
                     alert(translations[currentLanguage].therapyComplete);
-                    nextStep(); // Go to questionnaire
+                    nextStep(); // 前往问卷页面
                 }, 2000);
             };
-            
-            video.src = videoUrl;
-        }
 
+            // 如果视频加载出错，提供反馈
+            video.onerror = () => {
+                console.error("视频加载错误");
+                handleTherapyError("视频加载失败，请检查网络连接或刷新页面重试。");
+            };
+        }
+// ^^^^^^ 到这里复制结束 ^^^^^^// vvvvvv 从这里开始复制，用来替换原来的 showVideoPhase 函数 vvvvvv
+
+
+
+        
         async function fetchMusic(emotion) {
+            // 【核心修正】: 调用正确的、带进度反馈的流式API端点
+            const API_ENDPOINT = `${API_CONFIG.emotionApiUrl}/api/music/search-with-progress`;
+
             try {
-                const response = await fetch(`${API_CONFIG.emotionApiUrl}/api/music/search-text`, {
+                const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream' // 明确告诉服务器我们需要事件流
                     },
                     body: JSON.stringify({
                         query: emotion,
@@ -1803,28 +1826,68 @@
                     })
                 });
 
-                const data = await response.json();
-                
-                if (data.success && data.data?.segments?.length > 0) {
-                    const video = data.data.segments[0];
-                    const videoPath = video.url || video.video_path;
-                    
-                    if (videoPath) {
-                        studyData.therapyData.selectedMusic = video;
-                        setTimeout(() => {
-                            const videoUrl = `${API_CONFIG.emotionApiUrl}/api/video/${videoPath}`;
-                            showVideoPhase(videoUrl);
-                        }, 4000);
-                    } else {
-                        handleTherapyError(translations[currentLanguage].noVideoPath);
-                    }
-                } else {
-                    handleTherapyError(translations[currentLanguage].noMusicFound);
+                if (!response.ok) {
+                    throw new Error(`网络响应错误: ${response.status}`);
                 }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                
+                // 循环读取服务器发送的事件流数据
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        console.log('数据流结束');
+                        break;
+                    }
+                    
+                    const chunk = decoder.decode(value);
+                    // 服务器可能一次发送多个事件，用'\n\n'分割
+                    const lines = chunk.split('\n\n').filter(line => line.trim() !== '');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const jsonData = line.substring(6);
+                            try {
+                                const data = JSON.parse(jsonData);
+                                
+                                // 更新UI上的进度信息
+                                document.getElementById('feedback-text').innerText = data.message || '正在处理...';
+
+                                if (data.step === 'completed' && data.status === 'success') {
+                                    // 【核心修正】: 当流程完成时，直接使用后端返回的完整视频URL
+                                    if (data.data?.segments?.length > 0) {
+                                        const videoSegment = data.data.segments[0];
+                                        const finalVideoUrl = videoSegment.url; // 后端已经拼接好了完整的R2 URL
+
+                                        console.log('成功获取到最终的视频URL:', finalVideoUrl);
+                                        studyData.therapyData.selectedMusic = videoSegment;
+                                        
+                                        // 传递正确的URL给视频播放阶段
+                                        showVideoPhase(finalVideoUrl);
+                                    } else {
+                                        handleTherapyError(translations[currentLanguage].noMusicFound);
+                                    }
+                                } else if (data.step === 'error') {
+                                    handleTherapyError(data.message || '后端处理失败');
+                                }
+                            } catch (e) {
+                                console.error('解析JSON失败:', jsonData, e);
+                            }
+                        }
+                    }
+                }
+
             } catch (error) {
+                console.error('Fetch Music 错误:', error);
                 handleTherapyError(translations[currentLanguage].connectionError);
             }
         }
+
+// ^^^^^^ 到这里复制结束 ^^^^^^
+
+
+        
 
         function handleTherapyError(message) {
             alert(message);
