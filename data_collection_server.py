@@ -80,7 +80,7 @@ def submit():
     return jsonify({"status": "ok", "id": f"{timestamp}_{file_id}.json"}), 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5002))  # Changed default port to 5002
+    port = int(os.environ.get('PORT', 5000))  # Data collection server port
     print("🚀 Starting Flask server for research data collection...")
     print(f"📁 Data will be saved to: {DATA_DIR}")
     app.run(host="127.0.0.1", port=port, debug=True)
