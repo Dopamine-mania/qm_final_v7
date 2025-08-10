@@ -1,0 +1,58 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 环境配置
+.env
+.venv
+env/
+venv/
+
+# 日志文件
+*.log
+data_server.log
+api_server.log
+static_server.log
+
+# 研究数据
+research_data/*.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 🚫 排除所有AI模型和权重文件
+AC/models/
+AC/logs/
+
+# 🚫 排除所有音乐相关大文件
+MI_retrieve/retrieve_libraries/
+MI_retrieve/music_features/
+MI_retrieve/code/*.pth
+
+# 🚫 排除所有二进制和媒体文件
+*.mp4
+*.wav
+*.mp3
+*.avi
+*.mov
+*.pth
+*.safetensors
+*.bin
+*.tar.gz
+
+# Node modules (如果有)
+node_modules/
