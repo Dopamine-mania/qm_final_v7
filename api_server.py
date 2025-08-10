@@ -654,6 +654,65 @@ def not_found(error):
 def internal_error(error):
     return jsonify(create_api_response(False, error="Internal server error")), 500
 
+
+# ==================== 增加移动端支持====================
+# vvvvvv 请将这个新函数添加到您的 .py 文件末尾 vvvvvv
+
+@app.route('/api/music/get-healing-music', methods=['POST'])
+def get_healing_music_simple():
+    """
+    一个简单的、非流式的API端点，一次性完成所有计算并返回结果。
+    这是为了解决移动端浏览器对流式传输的兼容性问题。
+    """
+    try:
+        data = request.get_json()
+        if not data or 'query' not in data:
+            return jsonify(create_api_response(False, error="Missing 'query' parameter")), 400
+
+        query = data['query']
+        duration = data.get('settings', {}).get('duration', '3min')
+        max_results = 1 # 我们只需要一首歌
+
+        logger.info(f"收到简单API请求: '{query}'")
+
+        # 1. 情感分析
+        emotion_vector = emotion_api.get_emotion_for_kg_module(query)
+
+        # 2. 音乐检索
+        result = emotion_bridge.search_music_by_emotion(
+            emotion_vector=emotion_vector,
+            duration=duration,
+            top_k=max_results
+        )
+
+        # 3. 处理并返回结果
+        if result["success"] and result.get("results"):
+            item = result["results"][0]
+            R2_PUBLIC_URL = "https://pub-263b71ccbad648af97436d9666ca337e.r2.dev"
+
+            video_name = item['video_name']
+            relative_video_path = f"segments_{duration}/{video_name}.mp4"
+            full_r2_url = f"{R2_PUBLIC_URL}/{relative_video_path}"
+
+            final_segment = {
+                "id": f"segment_{video_name}_{duration}",
+                "title": video_name,
+                "artist": "疗愈音乐库",
+                "duration": _parse_duration(duration),
+                "url": full_r2_url,
+                "matchScore": float(item['similarity'])
+            }
+            return jsonify(create_api_response(True, data={"segments": [final_segment]}))
+        else:
+            return jsonify(create_api_response(False, error=result.get("error", "Music retrieval failed"))), 500
+
+    except Exception as e:
+        logger.error(f"简单API - 发生未知错误: {e}")
+        return jsonify(create_api_response(False, error=str(e))), 500
+
+# ^^^^^^ 添加结束 ^^^^^^
+
+
 # ==================== 主程序 ====================
 
 def main():

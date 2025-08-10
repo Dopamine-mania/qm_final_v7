@@ -1808,24 +1808,22 @@
 // ^^^^^^ 到这里复制结束 ^^^^^^// vvvvvv 从这里开始复制，用来替换原来的 showVideoPhase 函数 vvvvvv
 
 
+        // vvvvvv 从这里开始复制，用来替换掉您 index.html 文件中原来的整个 fetchMusic 函数 vvvvvv
 
-        
         async function fetchMusic(emotion) {
-            // 【核心修正】: 调用正确的、带进度反馈的流式API端点
-            const API_ENDPOINT = `${API_CONFIG.emotionApiUrl}/api/music/search-with-progress`;
+            // 【最终修正】: 调用全新的、非流式的、可靠的API端点
+            const API_ENDPOINT = `${API_CONFIG.emotionApiUrl}/api/music/get-healing-music`;
 
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'text/event-stream' // 明确告诉服务器我们需要事件流
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         query: emotion,
                         settings: {
-                            duration: '3min',
-                            max_results: 1
+                            duration: '3min'
                         }
                     })
                 });
@@ -1834,61 +1832,110 @@
                     throw new Error(`网络响应错误: ${response.status}`);
                 }
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                
-                // 循环读取服务器发送的事件流数据
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) {
-                        console.log('数据流结束');
-                        break;
-                    }
-                    
-                    const chunk = decoder.decode(value);
-                    // 服务器可能一次发送多个事件，用'\n\n'分割
-                    const lines = chunk.split('\n\n').filter(line => line.trim() !== '');
+                // 直接解析完整的JSON结果，不再需要处理数据流
+                const result = await response.json();
 
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const jsonData = line.substring(6);
-                            try {
-                                const data = JSON.parse(jsonData);
-                                
-                                // 更新UI上的进度信息
-                                document.getElementById('feedback-text').innerText = data.message || '正在处理...';
+                if (result.success && result.data?.segments?.length > 0) {
+                    const videoSegment = result.data.segments[0];
+                    const finalVideoUrl = videoSegment.url;
 
-                                if (data.step === 'completed' && data.status === 'success') {
-                                    // 【核心修正】: 当流程完成时，直接使用后端返回的完整视频URL
-                                    if (data.data?.segments?.length > 0) {
-                                        const videoSegment = data.data.segments[0];
-                                        const finalVideoUrl = videoSegment.url; // 后端已经拼接好了完整的R2 URL
+                    console.log('成功获取到最终的视频URL:', finalVideoUrl);
+                    studyData.therapyData.selectedMusic = videoSegment;
 
-                                        console.log('成功获取到最终的视频URL:', finalVideoUrl);
-                                        studyData.therapyData.selectedMusic = videoSegment;
-                                        
-                                        // 传递正确的URL给视频播放阶段
-                                        showVideoPhase(finalVideoUrl);
-                                    } else {
-                                        handleTherapyError(translations[currentLanguage].noMusicFound);
-                                    }
-                                } else if (data.step === 'error') {
-                                    handleTherapyError(data.message || '后端处理失败');
-                                }
-                            } catch (e) {
-                                console.error('解析JSON失败:', jsonData, e);
-                            }
-                        }
-                    }
+                    // 直接调用视频播放阶段
+                    showVideoPhase(finalVideoUrl);
+                } else {
+                    // 如果后端返回success:false或没有音乐数据
+                    throw new Error(result.error || translations[currentLanguage].noMusicFound);
                 }
 
             } catch (error) {
                 console.error('Fetch Music 错误:', error);
-                handleTherapyError(translations[currentLanguage].connectionError);
+                handleTherapyError(translations[currentLanguage].connectionError + `: ${error.message}`);
             }
         }
 
 // ^^^^^^ 到这里复制结束 ^^^^^^
+        
+//         async function fetchMusic(emotion) {
+//             // 【核心修正】: 调用正确的、带进度反馈的流式API端点
+//             const API_ENDPOINT = `${API_CONFIG.emotionApiUrl}/api/music/search-with-progress`;
+
+//             try {
+//                 const response = await fetch(API_ENDPOINT, {
+//                     method: 'POST',
+//                     headers: {
+//                         'Content-Type': 'application/json',
+//                         'Accept': 'text/event-stream' // 明确告诉服务器我们需要事件流
+//                     },
+//                     body: JSON.stringify({
+//                         query: emotion,
+//                         settings: {
+//                             duration: '3min',
+//                             max_results: 1
+//                         }
+//                     })
+//                 });
+
+//                 if (!response.ok) {
+//                     throw new Error(`网络响应错误: ${response.status}`);
+//                 }
+
+//                 const reader = response.body.getReader();
+//                 const decoder = new TextDecoder('utf-8');
+                
+//                 // 循环读取服务器发送的事件流数据
+//                 while (true) {
+//                     const { done, value } = await reader.read();
+//                     if (done) {
+//                         console.log('数据流结束');
+//                         break;
+//                     }
+                    
+//                     const chunk = decoder.decode(value);
+//                     // 服务器可能一次发送多个事件，用'\n\n'分割
+//                     const lines = chunk.split('\n\n').filter(line => line.trim() !== '');
+
+//                     for (const line of lines) {
+//                         if (line.startsWith('data: ')) {
+//                             const jsonData = line.substring(6);
+//                             try {
+//                                 const data = JSON.parse(jsonData);
+                                
+//                                 // 更新UI上的进度信息
+//                                 document.getElementById('feedback-text').innerText = data.message || '正在处理...';
+
+//                                 if (data.step === 'completed' && data.status === 'success') {
+//                                     // 【核心修正】: 当流程完成时，直接使用后端返回的完整视频URL
+//                                     if (data.data?.segments?.length > 0) {
+//                                         const videoSegment = data.data.segments[0];
+//                                         const finalVideoUrl = videoSegment.url; // 后端已经拼接好了完整的R2 URL
+
+//                                         console.log('成功获取到最终的视频URL:', finalVideoUrl);
+//                                         studyData.therapyData.selectedMusic = videoSegment;
+                                        
+//                                         // 传递正确的URL给视频播放阶段
+//                                         showVideoPhase(finalVideoUrl);
+//                                     } else {
+//                                         handleTherapyError(translations[currentLanguage].noMusicFound);
+//                                     }
+//                                 } else if (data.step === 'error') {
+//                                     handleTherapyError(data.message || '后端处理失败');
+//                                 }
+//                             } catch (e) {
+//                                 console.error('解析JSON失败:', jsonData, e);
+//                             }
+//                         }
+//                     }
+//                 }
+
+//             } catch (error) {
+//                 console.error('Fetch Music 错误:', error);
+//                 handleTherapyError(translations[currentLanguage].connectionError);
+//             }
+//         }
+
+// // ^^^^^^ 到这里复制结束 ^^^^^^
 
 
         
