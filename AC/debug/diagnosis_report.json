@@ -1,0 +1,100 @@
+{
+  "diagnosis_summary": {
+    "total_issues": 1,
+    "severity_score": 40,
+    "status": "WARNING",
+    "primary_issues": [
+      "❌ 模型加载失败"
+    ],
+    "recommendations": [
+      "检查模型文件格式和transformers版本"
+    ]
+  },
+  "detailed_results": {
+    "environment": {
+      "python_version": "3.9.13 (main, Aug 25 2022, 18:24:45) \n[Clang 12.0.0 ]",
+      "torch_version": "2.7.1",
+      "cuda_available": false,
+      "mps_available": true,
+      "device_count": 0,
+      "transformers_version": "4.30.2",
+      "numpy_version": "1.26.4"
+    },
+    "model_files": {
+      "model_directory": "/Users/wanxinchen/Study/AI/Project/Final project/SuperClaude/qm_final6/AC/models/finetuned_xlm_roberta",
+      "directory_exists": true,
+      "file_status": {
+        "config.json": {
+          "exists": true,
+          "size_bytes": 1864,
+          "size_mb": 0.0
+        },
+        "model.safetensors": {
+          "exists": true,
+          "size_bytes": 1112281908,
+          "size_mb": 1060.75
+        },
+        "tokenizer.json": {
+          "exists": true,
+          "size_bytes": 17082734,
+          "size_mb": 16.29
+        },
+        "tokenizer_config.json": {
+          "exists": true,
+          "size_bytes": 1178,
+          "size_mb": 0.0
+        },
+        "sentencepiece.bpe.model": {
+          "exists": true,
+          "size_bytes": 5069051,
+          "size_mb": 4.83
+        }
+      },
+      "total_size_mb": 1081.88,
+      "all_files_present": true
+    },
+    "config_consistency": {
+      "ac_config": {
+        "model_name": "xlm-roberta-base",
+        "num_labels": 27,
+        "max_length": 512,
+        "ck_emotions_count": 27,
+        "model_path": "/Users/wanxinchen/Study/AI/Project/Final project/SuperClaude/qm_final6/AC/models/finetuned_xlm_roberta"
+      },
+      "model_config": {
+        "architectures": [
+          "XLMRobertaForSequenceClassification"
+        ],
+        "num_labels": 27,
+        "problem_type": "multi_label_classification",
+        "hidden_size": 768,
+        "vocab_size": 250002
+      },
+      "consistency_check": {
+        "num_labels_match": true,
+        "architecture_correct": true,
+        "problem_type_correct": true
+      }
+    },
+    "model_loading": {
+      "tokenizer_loading": {
+        "success": false,
+        "error": "data did not match any variant of untagged enum PyPreTokenizerTypeWrapper at line 69 column 3"
+      },
+      "model_loading": {
+        "success": false,
+        "error": "'XLMRobertaClassificationHead' object has no attribute 'out_features'"
+      }
+    },
+    "inference_flow": {
+      "error": "模型或分词器未加载"
+    },
+    "output_analysis": {
+      "error": "模型或分词器未加载"
+    },
+    "weight_analysis": {
+      "error": "模型未加载"
+    }
+  },
+  "conclusion": "模型存在中等问题，建议优先修复权重和配置相关问题。"
+}

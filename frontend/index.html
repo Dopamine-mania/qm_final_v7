@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <title data-lang-zh="EmoHeal - 你的AI音乐疗愈师" data-lang-en="EmoHeal - Your AI Music Therapist">EmoHeal - 你的AI音乐疗愈师</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    
+    <link id="pagestyle" href="./assets/css/argon-dashboard.min.css" rel="stylesheet" />
+    <link href="./styles.css" rel="stylesheet" />
+    <link href="./assets/css/custom_animations.css" rel="stylesheet" />
+</head>
+
+<body class="healing-body">
+    <div class="gradient-overlay"></div>
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <main class="main-content position-relative h-100">
+        <nav class="navbar healing-navbar navbar-expand-lg" id="navbarBlur">
+            <div class="container-fluid py-3 px-4">
+                <a class="navbar-brand healing-brand m-0" href="#">
+                    <div class="brand-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <span class="brand-text" data-lang-zh="EmoHeal AI" data-lang-en="EmoHeal AI">EmoHeal AI</span>
+                </a>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <div class="ms-auto d-flex align-items-center">
+                        <button id="language-switcher" class="language-btn">
+                            <i class="fa fa-globe me-2"></i>
+                            <span data-lang-en="中文" data-lang-zh="English">English</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid py-5 d-flex align-items-center justify-content-center" style="min-height: 85vh;">
+            <div id="stage-container" class="col-lg-8 col-md-10">
+                
+                <!-- 输入阶段 -->
+                <div id="step-input" class="stage-card healing-card">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="healing-icon mb-3">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h3 class="healing-title" data-lang-zh="开始你的疗愈之旅" data-lang-en="Begin Your Healing Journey">开始你的疗愈之旅</h3>
+                            <p class="healing-subtitle" data-lang-zh="请写下你此刻的感受，让我们陪伴你找到内心的平静" data-lang-en="Share your feelings, and let us help you find inner peace">请写下你此刻的感受，让我们陪伴你找到内心的平静</p>
+                        </div>
+                        <div class="healing-input-container">
+                            <textarea id="user-input" class="healing-textarea" rows="6" placeholder="例如：今天下雨了，感觉有点孤独和怀旧..." data-lang-zh-placeholder="例如：今天下雨了，感觉有点孤独和怀旧..." data-lang-en-placeholder="e.g., It's raining today, feeling a bit lonely and nostalgic..."></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button id="submit-button" class="healing-btn healing-btn-primary" data-lang-zh="开启疗愈之旅" data-lang-en="Start Healing Journey">
+                                <i class="fas fa-heart-pulse me-2"></i>
+                                开启疗愈之旅
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 情绪分析阶段 -->
+                <div id="step-emotion-analysis" class="stage-card healing-card d-none">
+                    <div class="card-body text-center p-5">
+                        <div class="healing-icon healing-icon-emotion mb-4">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 id="emotion-title" class="healing-title mb-3"></h4>
+                        <p id="emotion-description" class="healing-description"></p>
+                        <div class="healing-progress-bar">
+                            <div class="healing-progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 知识图谱结果阶段 -->
+                <div id="step-kg-result" class="stage-card healing-card d-none">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="healing-icon healing-icon-kg mb-3">
+                                <i class="fas fa-prescription-bottle-medical"></i>
+                            </div>
+                            <h4 id="kg-title" class="healing-title"></h4>
+                        </div>
+                        <div class="healing-prescription">
+                            <ul id="kg-details" class="healing-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISO原理阶段 -->
+                <div id="step-iso-principle" class="stage-card healing-card d-none">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="healing-icon healing-icon-iso mb-3">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <h4 id="iso-title" class="healing-title"></h4>
+                        </div>
+                        <p id="iso-description" class="healing-description text-center"></p>
+                        <div class="healing-wave-animation">
+                            <div class="wave wave1"></div>
+                            <div class="wave wave2"></div>
+                            <div class="wave wave3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 视频播放阶段 -->
+                <div id="step-video-player" class="stage-card healing-card d-none">
+                    <div class="card-header text-center pb-3">
+                        <h4 id="video-title" class="healing-title"></h4>
+                        <p class="healing-subtitle" data-lang-zh="专为你定制的音乐疗愈体验" data-lang-en="Customized music therapy experience for you">专为你定制的音乐疗愈体验</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="healing-video-container">
+                            <video id="healing-video" src="" controls autoplay muted playsinline class="healing-video"></video>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结束场景 -->
+                <div id="step-conclusion" class="stage-card healing-card d-none">
+                    <div class="card-body text-center p-5">
+                        <div class="healing-icon healing-icon-iso mb-4">
+                            <i class="fas fa-feather-alt"></i>
+                        </div>
+                        <h5 class="healing-title mb-3" data-lang-zh="现在感受好点了吗？" data-lang-en="Are you feeling better now?">现在感受好点了吗？</h5>
+                        <p class="healing-description mb-4" data-lang-zh="你可以选择重新开始一次疗愈之旅，或者带着这份平静，回到自己的生活。" data-lang-en="You can choose to start a new healing journey, or return to your life with this newfound peace.">你可以选择重新开始一次疗愈之旅，或者带着这份平静，回到自己的生活。</p>
+                        
+                        <div class="d-flex justify-content-center">
+                            <button id="restart-button" class="healing-btn healing-btn-primary me-3" data-lang-zh="再体验一次" data-lang-en="Try Again">
+                                <i class="fas fa-redo-alt me-2"></i>
+                                再体验一次
+                            </button>
+                            <button id="end-session-button" class="healing-btn healing-btn-secondary" data-lang-zh="结束疗愈" data-lang-en="End Session">
+                                <i class="fas fa-door-open me-2"></i>
+                                结束疗愈
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </main>
+  
+  <script src="./assets/js/core/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/argon-dashboard.min.js"></script>
+  
+  <script src="./study_flow.js"></script> 
+</body>
+</html>

@@ -18,10 +18,10 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 try:
-    from .emotion_classifier import EmotionClassifier
+    from .emotion_classifier import CompatibleEmotionClassifier as EmotionClassifier
     from .emotion_mapper import GoEmotionsMapper
 except ImportError:
-    from emotion_classifier import EmotionClassifier
+    from emotion_classifier import CompatibleEmotionClassifier as EmotionClassifier
     from emotion_mapper import GoEmotionsMapper
 try:
     from .config import COWEN_KELTNER_EMOTIONS, INFERENCE_CONFIG, MODEL_PATHS

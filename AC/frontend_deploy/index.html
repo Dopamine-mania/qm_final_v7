@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmoHeal - 情感疗愈分析系统</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1 class="brand-title">
+                    <span class="brand-emoji">🎵</span>
+                    <span data-i18n="app.title">EmoHeal</span>
+                </h1>
+                <p class="brand-subtitle" data-i18n="app.subtitle">情感疗愈分析系统</p>
+            </div>
+            <div class="nav-controls">
+                <button id="langToggle" class="lang-toggle" aria-label="切换语言">
+                    <span class="lang-current">中</span>
+                    <span class="lang-separator">/</span>
+                    <span class="lang-alt">EN</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 输入区域 -->
+            <section class="input-section">
+                <div class="input-card">
+                    <h2 class="section-title" data-i18n="input.title">表达你的感受</h2>
+                    <p class="section-description" data-i18n="input.description">
+                        分享你当前的心情、想法或感受，我们将为你提供专业的情感分析和疗愈建议
+                    </p>
+                    
+                    <div class="input-group">
+                        <textarea 
+                            id="emotionInput" 
+                            class="emotion-input" 
+                            rows="4"
+                            data-i18n-placeholder="input.placeholder"
+                            placeholder="请告诉我你现在的感受...比如：我今天感到很焦虑，工作压力很大，难以放松..."></textarea>
+                        <div class="input-actions">
+                            <button id="analyzeBtn" class="analyze-btn" type="button">
+                                <span class="btn-icon">🔍</span>
+                                <span class="btn-text" data-i18n="input.analyze">开始分析</span>
+                            </button>
+                            <button id="clearBtn" class="clear-btn" type="button">
+                                <span data-i18n="input.clear">清空</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 分析结果区域 -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <!-- 主要情感展示 -->
+                <div class="primary-emotion-card">
+                    <h3 class="card-title" data-i18n="results.primary.title">主要情感</h3>
+                    <div class="primary-emotion-display">
+                        <div class="emotion-icon" id="primaryEmotionIcon">😊</div>
+                        <div class="emotion-info">
+                            <h4 class="emotion-name" id="primaryEmotionName">快乐</h4>
+                            <p class="emotion-intensity" id="primaryEmotionIntensity">强烈 (87%)</p>
+                            <p class="emotion-description" id="primaryEmotionDescription">
+                                你当前体验到强烈的快乐情感，这是一种积极的情绪状态。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 情感分布图表 -->
+                <div class="emotion-charts">
+                    <!-- 前3情感列表 -->
+                    <div class="top-emotions-card">
+                        <h3 class="card-title" data-i18n="results.top3.title">情感成分分析</h3>
+                        <div id="topEmotionsList" class="top-emotions-list">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 情感平衡图 -->
+                    <div class="emotion-balance-card">
+                        <h3 class="card-title" data-i18n="results.balance.title">情感平衡</h3>
+                        <div class="balance-chart-container">
+                            <canvas id="balanceChart" width="300" height="200"></canvas>
+                        </div>
+                        <div class="balance-legend">
+                            <div class="legend-item positive">
+                                <span class="legend-color"></span>
+                                <span data-i18n="results.balance.positive">积极情感</span>
+                                <span class="legend-value" id="positiveValue">0%</span>
+                            </div>
+                            <div class="legend-item negative">
+                                <span class="legend-color"></span>
+                                <span data-i18n="results.balance.negative">消极情感</span>
+                                <span class="legend-value" id="negativeValue">0%</span>
+                            </div>
+                            <div class="legend-item neutral">
+                                <span class="legend-color"></span>
+                                <span data-i18n="results.balance.neutral">中性情感</span>
+                                <span class="legend-value" id="neutralValue">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 详细分析和建议 -->
+                <div class="analysis-summary-card">
+                    <h3 class="card-title" data-i18n="results.summary.title">情感分析摘要</h3>
+                    <div class="summary-content">
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <span class="stat-label" data-i18n="results.summary.intensity">总强度</span>
+                                <span class="stat-value" id="totalIntensity">0.0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label" data-i18n="results.summary.active">活跃情感</span>
+                                <span class="stat-value" id="activeEmotions">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label" data-i18n="results.summary.dominance">情感主导性</span>
+                                <span class="stat-value" id="emotionDominance">中等</span>
+                            </div>
+                        </div>
+                        <div class="summary-text" id="summaryText">
+                            根据你的表达，我们检测到了复合情感状态...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 疗愈建议 -->
+                <div class="healing-suggestions-card">
+                    <h3 class="card-title" data-i18n="results.healing.title">个性化疗愈建议</h3>
+                    <div class="suggestions-content">
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">🎵</div>
+                            <div class="suggestion-text">
+                                <h4 data-i18n="results.healing.music">音乐疗愈</h4>
+                                <p id="musicSuggestion">基于你的情感状态，推荐聆听舒缓的古典音乐...</p>
+                            </div>
+                        </div>
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">🧘</div>
+                            <div class="suggestion-text">
+                                <h4 data-i18n="results.healing.mindfulness">冥想练习</h4>
+                                <p id="mindfulnessSuggestion">尝试5分钟的深呼吸练习来平衡你的情绪...</p>
+                            </div>
+                        </div>
+                        <div class="suggestion-item">
+                            <div class="suggestion-icon">💭</div>
+                            <div class="suggestion-text">
+                                <h4 data-i18n="results.healing.reflection">情感反思</h4>
+                                <p id="reflectionSuggestion">花一些时间思考触发这些情感的具体原因...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 加载状态 -->
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text" data-i18n="loading.analyzing">正在分析你的情感...</p>
+            </div>
+
+            <!-- 错误状态 -->
+            <div id="errorState" class="error-state" style="display: none;">
+                <div class="error-icon">⚠️</div>
+                <p class="error-text" id="errorMessage">分析过程中出现错误，请稍后重试</p>
+                <button id="retryBtn" class="retry-btn" data-i18n="error.retry">重新分析</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">
+                <span data-i18n="footer.powered">Powered by</span> 
+                <strong>SuperClaude EmoHeal</strong> 
+                <span data-i18n="footer.system">情感疗愈系统</span>
+            </p>
+            <p class="footer-note" data-i18n="footer.note">
+                基于Cowen & Keltner 27维情感模型和XLM-RoBERTa多语言分析
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/i18n.js"></script>
+    <script src="js/emotion-analysis.js"></script>
+    <script src="js/ui-interactions.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

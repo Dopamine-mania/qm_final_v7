@@ -1,0 +1,688 @@
+/* ======================== CSS变量定义 ======================== */
+:root {
+  /* 科技疗愈主色调 */
+  --primary-gradient: linear-gradient(135deg, #0066ff 0%, #00d4ff 100%);
+  --secondary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --accent-gradient: linear-gradient(135deg, #00ff88 0%, #00b4db 100%);
+  
+  /* 背景色系 */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: rgba(20, 20, 40, 0.8);
+  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-overlay: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+  
+  /* 文字色系 */
+  --text-primary: #ffffff;
+  --text-secondary: #b8bcc8;
+  --text-muted: #7c8db5;
+  --text-accent: #00d4ff;
+  
+  /* 边框和阴影 */
+  --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+  --shadow-glow: 0 8px 32px rgba(0, 100, 255, 0.2);
+  --shadow-card: 0 8px 25px -8px rgba(0, 0, 0, 0.3);
+  --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  
+  /* 动画缓动 */
+  --ease-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ======================== 全局样式重置 ======================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ======================== 背景和粒子效果 ======================== */
+.healing-body {
+  position: relative;
+  background: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(0, 102, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+}
+
+.gradient-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-overlay);
+  z-index: -2;
+  pointer-events: none;
+}
+
+.floating-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--text-accent);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { left: 20%; animation-delay: -2s; animation-duration: 8s; }
+.particle:nth-child(2) { left: 40%; animation-delay: -4s; animation-duration: 6s; }
+.particle:nth-child(3) { left: 60%; animation-delay: -1s; animation-duration: 10s; }
+.particle:nth-child(4) { left: 80%; animation-delay: -3s; animation-duration: 7s; }
+.particle:nth-child(5) { left: 10%; animation-delay: -5s; animation-duration: 9s; }
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-10vh) rotate(180deg);
+  }
+}
+
+/* ======================== 导航栏样式 ======================== */
+.healing-navbar {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: var(--border-glass);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.healing-brand {
+  display: flex;
+  align-items: center;
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.healing-brand:hover {
+  color: var(--text-accent) !important;
+  transform: translateY(-1px);
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  box-shadow: var(--shadow-glow);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.brand-icon i {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.brand-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: var(--shadow-glow); }
+  50% { box-shadow: 0 8px 32px rgba(0, 100, 255, 0.4); }
+}
+
+/* 语言切换按钮 */
+.language-btn {
+  background: var(--bg-glass);
+  border: var(--border-glass);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s var(--ease-smooth);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.language-btn:hover {
+  background: var(--primary-gradient);
+  border-color: transparent;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ======================== 卡片容器样式 ======================== */
+#stage-container {
+  perspective: 1000px;
+  padding: 0 15px;
+}
+
+.healing-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: var(--border-glass);
+  border-radius: 24px;
+  box-shadow: var(--shadow-heavy);
+  transition: all 0.6s var(--ease-smooth);
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.healing-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--primary-gradient);
+  opacity: 0.5;
+}
+
+.healing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    var(--shadow-heavy),
+    0 0 50px rgba(0, 100, 255, 0.1);
+}
+
+/* ======================== 卡片动画效果 ======================== */
+.stage-card.fade-out {
+  opacity: 0;
+  transform: rotateY(-15deg) scale(0.95) translateZ(-50px);
+}
+
+.stage-card.fade-in {
+  opacity: 1;
+  transform: rotateY(0deg) scale(1) translateZ(0px);
+}
+
+/* ======================== 文字样式 ======================== */
+.healing-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.healing-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.healing-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* ======================== 图标样式 ======================== */
+.healing-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.healing-icon::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  opacity: 0.2;
+  z-index: -1;
+  animation: icon-pulse 2s ease-in-out infinite;
+}
+
+.healing-icon i {
+  color: var(--text-accent);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 不同阶段的图标颜色 */
+.healing-icon-emotion { background: var(--secondary-gradient); }
+.healing-icon-kg { background: var(--accent-gradient); }
+.healing-icon-iso { background: var(--primary-gradient); }
+
+@keyframes icon-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.2; }
+  50% { transform: scale(1.05); opacity: 0.4; }
+}
+
+/* ======================== 输入框样式 ======================== */
+.healing-input-container {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.healing-textarea {
+  width: 100%;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: var(--border-glass);
+  border-radius: 16px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+  padding: 20px;
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s var(--ease-smooth);
+  font-family: inherit;
+}
+
+.healing-textarea:focus {
+  outline: none;
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 
+    0 0 0 3px rgba(0, 212, 255, 0.1),
+    0 8px 25px rgba(0, 100, 255, 0.15);
+  background: var(--bg-card);
+}
+
+.healing-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* ======================== 按钮样式 ======================== */
+.healing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-bounce);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.healing-btn-primary {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+
+.healing-btn-primary:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    var(--shadow-glow),
+    0 15px 35px rgba(0, 100, 255, 0.3);
+}
+
+.healing-btn-secondary {
+  background: var(--secondary-gradient);
+  color: white;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+}
+
+.healing-btn-secondary:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 8px 32px rgba(99, 102, 241, 0.4),
+    0 15px 35px rgba(99, 102, 241, 0.3);
+}
+
+.healing-btn:disabled {
+  opacity: 0.7;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.healing-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.healing-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ======================== 进度条样式 ======================== */
+.healing-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-glass);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.healing-progress-fill {
+  height: 100%;
+  background: var(--primary-gradient);
+  width: 0;
+  border-radius: 2px;
+  animation: progress-fill 3s ease-in-out forwards;
+}
+
+@keyframes progress-fill {
+  to { width: 100%; }
+}
+
+/* ======================== 列表样式 ======================== */
+.healing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.healing-list li {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: var(--border-glass);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0;
+  animation: fadeInUp 0.6s var(--ease-smooth) forwards;
+  position: relative;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.healing-list li:hover {
+  transform: translateX(8px);
+  border-color: rgba(0, 212, 255, 0.3);
+  background: var(--bg-card);
+}
+
+.healing-list li::before {
+  content: '✨';
+  margin-right: 12px;
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================== 波浪动画 ======================== */
+.healing-wave-animation {
+  position: relative;
+  height: 60px;
+  margin-top: 2rem;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: var(--primary-gradient);
+  border-radius: 50px 50px 0 0;
+  opacity: 0.3;
+  animation: wave-flow 3s ease-in-out infinite;
+}
+
+.wave1 { animation-delay: 0s; opacity: 0.4; }
+.wave2 { animation-delay: 0.5s; opacity: 0.3; }
+.wave3 { animation-delay: 1s; opacity: 0.2; }
+
+@keyframes wave-flow {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* ======================== 视频播放器样式 ======================== */
+.healing-video-container {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: var(--border-glass);
+  box-shadow: var(--shadow-card);
+}
+
+.healing-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+  background: var(--bg-primary);
+}
+
+.healing-video:focus {
+  outline: none;
+}
+
+/* ======================== 重新开始按钮 ======================== */
+#restart-button {
+  margin-top: 1.5rem;
+  background: var(--secondary-gradient);
+  animation: pulse-attention 2s ease-in-out infinite;
+}
+
+@keyframes pulse-attention {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+  }
+}
+
+/* ======================== 响应式设计 ======================== */
+@media (max-width: 768px) {
+  .healing-title {
+    font-size: 1.5rem;
+  }
+  
+  .healing-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .healing-card {
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+  
+  .healing-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .healing-btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    min-width: 180px;
+  }
+  
+  .healing-textarea {
+    min-height: 100px;
+    padding: 16px;
+  }
+  
+  .brand-text {
+    font-size: 1rem;
+  }
+  
+  .language-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  #stage-container {
+    padding: 0 10px;
+  }
+  
+  .healing-card .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .healing-title {
+    font-size: 1.25rem;
+  }
+  
+  .healing-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .healing-btn {
+    min-width: 160px;
+    font-size: 0.85rem;
+  }
+  
+  .floating-particles {
+    display: none; /* 在小屏幕上隐藏粒子效果以提高性能 */
+  }
+}
+
+/* ======================== 加载动画 ======================== */
+@keyframes spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border: 0.125em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner 0.75s linear infinite;
+}
+
+/* ======================== 滚动条样式 ======================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-gradient);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-gradient);
+}
+
+/* ======================== 选择文本样式 ======================== */
+::selection {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--text-primary);
+}
+
+/* ======================== 焦点辅助功能 ======================== */
+.healing-btn:focus,
+.healing-textarea:focus,
+.language-btn:focus {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+/* ======================== 打印样式 ======================== */
+@media print {
+  .floating-particles,
+  .gradient-overlay,
+  .healing-navbar {
+    display: none;
+  }
+  
+  .healing-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

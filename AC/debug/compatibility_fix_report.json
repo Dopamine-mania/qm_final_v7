@@ -1,0 +1,64 @@
+{
+  "diagnosis": {
+    "transformers_version": {
+      "current_version": "4.30.2",
+      "major": 4,
+      "minor": 30,
+      "patch": 2,
+      "compatible": true,
+      "issues": [
+        "tokenizer格式可能不兼容，需要重新生成"
+      ]
+    },
+    "tokenizer_compatibility": {
+      "tests": [
+        {
+          "name": "direct_loading",
+          "success": false,
+          "error": "data did not match any variant of untagged enum PyPreTokenizerTypeWrapper at line 69 column 3"
+        },
+        {
+          "name": "base_model_loading",
+          "success": true,
+          "vocab_size": 250002
+        }
+      ],
+      "config_analysis": {
+        "model_max_length": 512,
+        "tokenizer_class": "XLMRobertaTokenizer",
+        "special_tokens": 0
+      }
+    },
+    "model_structure_compatibility": {
+      "tests": [],
+      "config_loading": {
+        "success": true,
+        "architectures": [
+          "XLMRobertaForSequenceClassification"
+        ],
+        "num_labels": 27,
+        "problem_type": "multi_label_classification"
+      },
+      "model_structure": {
+        "success": true,
+        "model_type": "XLMRobertaForSequenceClassification",
+        "classifier_info": {
+          "has_classifier": true,
+          "classifier_type": "XLMRobertaClassificationHead",
+          "out_proj_out_features": 27,
+          "out_proj": "<class 'torch.nn.modules.linear.Linear'>",
+          "dense_out_features": 768,
+          "dense": "<class 'torch.nn.modules.linear.Linear'>"
+        },
+        "num_parameters": 278064411
+      }
+    },
+    "recommended_fixes": []
+  },
+  "fixes_applied": [
+    "tokenizer_compatibility",
+    "compatible_classifier",
+    "quick_fix_script"
+  ],
+  "success": true
+}

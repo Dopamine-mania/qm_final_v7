@@ -14,7 +14,7 @@ AC (Affective Computing) Module - 情感计算模块
 - config.py: 配置文件
 """
 
-from .emotion_classifier import EmotionClassifier
+from .emotion_classifier import CompatibleEmotionClassifier
 from .inference_api import EmotionInferenceAPI
 from .emotion_mapper import GoEmotionsMapper
 
@@ -22,7 +22,7 @@ __version__ = "1.0.0"
 __author__ = "SuperClaude qm_final4"
 
 __all__ = [
-    "EmotionClassifier",
+    "CompatibleEmotionClassifier",
     "EmotionInferenceAPI", 
     "GoEmotionsMapper"
 ]

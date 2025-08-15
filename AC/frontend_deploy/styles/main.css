@@ -1,0 +1,723 @@
+/* ============================================================================
+   EmoHeal - 情感疗愈分析系统 CSS样式
+   ============================================================================ */
+
+/* CSS自定义属性 (变量) */
+:root {
+  /* 颜色系统 */
+  --primary-color: #667eea;
+  --primary-dark: #5a6fd8;
+  --secondary-color: #764ba2;
+  --accent-color: #f093fb;
+  
+  /* 情感颜色 */
+  --positive-color: #10b981;
+  --negative-color: #ef4444;
+  --neutral-color: #8b5cf6;
+  
+  /* 背景色 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* 文本颜色 */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --text-inverse: #ffffff;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  /* 边框半径 */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  /* 间距 */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* 字体 */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  
+  /* 动画 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* 基础重置和全局样式 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 容器和布局 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+/* 导航栏 */
+.navbar {
+  background: var(--bg-gradient);
+  color: var(--text-inverse);
+  padding: var(--spacing-lg) 0;
+  box-shadow: var(--shadow-md);
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand .brand-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.brand-emoji {
+  font-size: 1.2em;
+}
+
+.brand-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* 语言切换按钮 */
+.lang-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-inverse);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: var(--transition-normal);
+  backdrop-filter: blur(10px);
+}
+
+.lang-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.lang-separator {
+  opacity: 0.6;
+  margin: 0 2px;
+}
+
+/* 主内容区 */
+.main-content {
+  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - 200px);
+}
+
+/* 节标题 */
+.section-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-primary);
+}
+
+.section-description {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+  line-height: 1.6;
+}
+
+/* 卡片样式 */
+.card-base {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  transition: var(--transition-normal);
+}
+
+.card-base:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* 输入区域 */
+.input-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.input-card {
+  @extend .card-base;
+}
+
+.input-group {
+  position: relative;
+}
+
+.emotion-input {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--spacing-lg);
+  border: 2px solid var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  resize: vertical;
+  transition: var(--transition-normal);
+  background: var(--bg-secondary);
+}
+
+.emotion-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.emotion-input::placeholder {
+  color: var(--text-muted);
+}
+
+.input-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  justify-content: flex-end;
+}
+
+/* 按钮样式 */
+.analyze-btn {
+  background: var(--bg-gradient);
+  color: var(--text-inverse);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  box-shadow: var(--shadow-md);
+}
+
+.analyze-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.analyze-btn.connection-error {
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  animation: connectionPulse 2s infinite;
+}
+
+@keyframes connectionPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.clear-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid var(--bg-tertiary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.clear-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 结果展示区域 */
+.results-section {
+  animation: fadeInUp var(--transition-slow);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 主要情感卡片 */
+.primary-emotion-card {
+  @extend .card-base;
+  background: var(--bg-gradient);
+  color: var(--text-inverse);
+  margin-bottom: var(--spacing-xl);
+}
+
+.primary-emotion-display {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.emotion-icon {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.emotion-info {
+  flex: 1;
+}
+
+.emotion-name {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.emotion-intensity {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin: 0 0 var(--spacing-md) 0;
+  opacity: 0.9;
+}
+
+.emotion-description {
+  margin: 0;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+/* 情感图表区域 */
+.emotion-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+@media (max-width: 968px) {
+  .emotion-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.top-emotions-card,
+.emotion-balance-card {
+  @extend .card-base;
+}
+
+/* 前3情感列表 */
+.top-emotions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.emotion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-normal);
+}
+
+.emotion-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.emotion-item-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.emotion-item-icon {
+  font-size: 1.5rem;
+}
+
+.emotion-item-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.emotion-item-percentage {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.emotion-progress {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  margin-top: var(--spacing-xs);
+  overflow: hidden;
+}
+
+.emotion-progress-fill {
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: 3px;
+  transition: width var(--transition-slow);
+}
+
+/* 情感平衡图 */
+.balance-chart-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.balance-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-item.positive .legend-color {
+  background: var(--positive-color);
+}
+
+.legend-item.negative .legend-color {
+  background: var(--negative-color);
+}
+
+.legend-item.neutral .legend-color {
+  background: var(--neutral-color);
+}
+
+.legend-value {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+/* 分析摘要卡片 */
+.analysis-summary-card {
+  @extend .card-base;
+  margin-bottom: var(--spacing-xl);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-value {
+  display: block;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.summary-text {
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* 疗愈建议卡片 */
+.healing-suggestions-card {
+  @extend .card-base;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: var(--text-inverse);
+}
+
+.suggestions-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+}
+
+.suggestion-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.suggestion-text h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.suggestion-text p {
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-tertiary);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-lg);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+/* 错误状态 */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.error-text {
+  color: var(--negative-color);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.retry-btn {
+  background: var(--negative-color);
+  color: var(--text-inverse);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 页脚 */
+.footer {
+  background: var(--text-primary);
+  color: var(--text-inverse);
+  padding: var(--spacing-xl) 0;
+  text-align: center;
+  margin-top: var(--spacing-2xl);
+}
+
+.footer-text {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--font-size-base);
+}
+
+.footer-note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  opacity: 0.7;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .navbar .container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .primary-emotion-display {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-lg);
+  }
+  
+  .input-actions {
+    justify-content: center;
+  }
+  
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .suggestion-item {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .card-base {
+    padding: var(--spacing-lg);
+  }
+  
+  .emotion-input {
+    min-height: 100px;
+  }
+  
+  .input-actions {
+    flex-direction: column;
+  }
+}
+
+/* 可访问性增强 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 深色模式支持 (如果需要的话) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #4a5568;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .navbar,
+  .footer,
+  .input-section,
+  .healing-suggestions-card {
+    display: none;
+  }
+  
+  .card-base {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

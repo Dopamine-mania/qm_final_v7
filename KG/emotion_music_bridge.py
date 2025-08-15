@@ -16,7 +16,7 @@ from typing import Dict, List, Any, Optional, Tuple
 # 添加MI_retrieve模块路径
 sys.path.append(str(Path(__file__).parent.parent / "MI_retrieve"))
 
-from .knowledge_graph import KnowledgeGraph
+from knowledge_graph import KnowledgeGraph
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
