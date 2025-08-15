@@ -56,3 +56,6 @@ MI_retrieve/code/*.pth
 
 # Node modules (如果有)
 node_modules/
+
+# Claude Code配置文件
+.claude/
