@@ -150,7 +150,21 @@ const mockApi = {
             case 1:
                 response = {
                     status: 'AC_COMPLETE',
-                    result: { analysisResult: { title: "深度悲伤", description: "系统捕捉到您内心的孤独与失落感，正在为您寻找共鸣与慰藉。" } }
+                    result: { 
+                        analysisResult: { 
+                            title: "深度悲伤", 
+                            description: "我们感受到了您内心深处的悲伤，它似乎还交织着对过往的思念...",
+                            topEmotions: [
+                                {"name": "悲伤", "score": 0.85},
+                                {"name": "思念", "score": 0.60},
+                                {"name": "疲倦", "score": 0.40},
+                                {"name": "平静", "score": 0.30},
+                                {"name": "孤独", "score": 0.25},
+                                {"name": "失落", "score": 0.20},
+                                {"name": "无助", "score": 0.15}
+                            ]
+                        } 
+                    }
                 };
                 break;
             case 2:
@@ -199,6 +213,8 @@ const mockApi = {
 let sessionId = null;
 let pollingIntervalId = null;
 let currentStageId = 'step-input'; // 记录当前显示的舞台ID
+let emotionChart = null; // 情绪雷达图实例
+let particlesInstance = null; // 粒子效果实例
 
 // DOM元素获取
 const submitButton = document.getElementById('submit-button');
@@ -257,16 +273,86 @@ function startPolling() {
     }, 2000); // 每2秒查询一次
 }
 
-// 状态处理器
+// 状态处理器 (升级版)
 function handleState(data) {
     if (data.status === 'AC_COMPLETE') {
-        clearInterval(pollingIntervalId);
-        const el = stages['step-emotion-analysis'];
-        el.querySelector('#emotion-title').innerText = data.result.analysisResult.title;
-        el.querySelector('#emotion-description').innerText = data.result.analysisResult.description;
+        clearInterval(pollingIntervalId); // 暂停轮询
         
+        const container = document.getElementById('emotion-core-container');
+        const titleEl = document.getElementById('emotion-title');
+        const descriptionEl = document.getElementById('emotion-description');
+        
+        container.innerHTML = '';
+        titleEl.innerText = '';
+        descriptionEl.innerText = '';
         switchToStage('step-emotion-analysis');
-        setTimeout(startPolling, 3500);
+
+        // ★★★ 修复3: 延长"27维分析"的展示时间 ★★★
+        const scannerText = document.createElement('div');
+        scannerText.className = 'scanner-text';
+        scannerText.innerText = 'Analyzing 27 emotional dimensions...'; // 保持英文以凸显科技感
+        container.appendChild(scannerText);
+
+        const scannerLine = document.createElement('div');
+        scannerLine.className = 'scanner-line';
+        container.appendChild(scannerLine);
+        
+        // 将扫描动画的时长从2秒延长到3.5秒
+        const SCAN_DURATION = 3500;
+
+        // "能量核心可视化"阶段
+        setTimeout(() => {
+            container.innerHTML = ''; // 清空扫描动画
+            const emotions = data.result.analysisResult.topEmotions;
+
+            const core = document.createElement('div');
+            core.className = 'emotion-core';
+            container.appendChild(core);
+
+            const radius = 110;
+            emotions.slice(1).forEach((emo, index) => {
+                const angle = (index / (emotions.length - 1)) * 2 * Math.PI - (Math.PI / 2); // 调整起始角度
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                const size = 5 + (emo.score || 0) * 15;
+
+                // ★★★ 修复2: 为卫星创建容器和标签 ★★★
+                const satelliteContainer = document.createElement('div');
+                satelliteContainer.style.position = 'absolute';
+                satelliteContainer.style.left = `calc(50% + ${x}px)`;
+                satelliteContainer.style.top = `calc(50% + ${y}px)`;
+                
+                const satellite = document.createElement('div');
+                satellite.className = 'emotion-satellite';
+                satellite.style.width = `${size}px`;
+                satellite.style.height = `${size}px`;
+                satellite.style.animationDelay = `${(SCAN_DURATION / 1000) + 0.2 + index * 0.1}s`;
+                satellite.title = `${emo.name} (${((emo.score || 0) * 100).toFixed(0)}%)`;
+                
+                const label = document.createElement('span');
+                label.className = 'satellite-label';
+                label.innerText = emo.name;
+                // 根据位置调整标签位置，避免重叠
+                label.style.transform = `translate(${size/2 + 5}px, -${size/2}px)`;
+                label.style.opacity = '0.7'; // 默认显示标签
+                
+                satelliteContainer.appendChild(satellite);
+                satelliteContainer.appendChild(label);
+                container.appendChild(satelliteContainer);
+            });
+
+        }, SCAN_DURATION); // 使用新的时长
+
+        // "共情式解读"阶段
+        setTimeout(() => {
+            titleEl.innerText = data.result.analysisResult.title;
+            descriptionEl.innerText = data.result.analysisResult.description;
+            titleEl.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+            descriptionEl.style.animation = 'fadeIn 0.5s ease-in-out 0.2s forwards';
+        }, SCAN_DURATION + 500); // 在扫描结束后0.5秒显示
+
+        // 继续流程 (总时长 = 扫描时长 + 后续展示时长)
+        setTimeout(startPolling, SCAN_DURATION + 4000); 
     } 
     else if (data.status === 'KG_COMPLETE') {
         clearInterval(pollingIntervalId);
@@ -353,6 +439,18 @@ async function resetUI() {
     stages['step-input'].classList.remove('d-none', 'fade-out', 'fade-in');
     currentStageId = 'step-input';
 
+    // ★★★ 新增：销毁情绪雷达图实例 ★★★
+    if (emotionChart) {
+        emotionChart.destroy();
+        emotionChart = null;
+    }
+    
+    // ★★★ 新增：清理粒子效果 ★★★
+    if (particlesInstance) {
+        particlesInstance.destroy();
+        particlesInstance = null;
+    }
+
     // 重置视频播放器
     const videoPlayer = document.getElementById('healing-video');
     videoPlayer.src = "";
@@ -401,6 +499,87 @@ endSessionButton.addEventListener('click', () => {
     // 简单地将最后一个卡片淡出
     stages['step-conclusion'].classList.add('fade-out');
 });
+// =================================================================
+
+// ======================== 粒子效果初始化函数 ========================
+async function initializeParticles() {
+    // 清理旧的粒子实例
+    if (particlesInstance) {
+        particlesInstance.destroy();
+        particlesInstance = null;
+    }
+    
+    try {
+        particlesInstance = await tsParticles.load("particle-canvas", {
+            fpsLimit: 60,
+            particles: {
+                number: { 
+                    value: 80, 
+                    density: { 
+                        enable: true, 
+                        value_area: 800 
+                    } 
+                },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { 
+                    value: 0.5, 
+                    random: true 
+                },
+                size: { 
+                    value: 1, 
+                    random: { 
+                        enable: true, 
+                        minimumValue: 0.5 
+                    } 
+                },
+                move: {
+                    enable: true,
+                    speed: 0.5,
+                    direction: "none",
+                    outModes: {
+                        default: "out"
+                    }
+                },
+                links: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                }
+            },
+            interactivity: {
+                events: {
+                    onHover: { 
+                        enable: true, 
+                        mode: "grab" 
+                    },
+                    onClick: { 
+                        enable: true, 
+                        mode: "push" 
+                    }
+                },
+                modes: {
+                    grab: { 
+                        distance: 140, 
+                        links: { 
+                            opacity: 1 
+                        } 
+                    },
+                    push: { 
+                        quantity: 4 
+                    }
+                }
+            },
+            detectRetina: true
+        });
+        
+        console.log('✨ 粒子效果初始化成功');
+    } catch (error) {
+        console.error('粒子效果初始化失败:', error);
+    }
+}
 // =================================================================
 
 // ========================================================================

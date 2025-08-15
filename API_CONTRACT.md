@@ -10,13 +10,11 @@
 
 ---
 
-### **状态 1: 情感分析完成 (`AC_COMPLETE`)**
-
-**触发时机**: 后端 `background_task` 调用情感分析模块 (`EmotionInferenceAPI`) 并成功获得结果后。
+### 状态 1: 情感分析完成 (`AC_COMPLETE`)
 
 **后端实现要点**:
-1.  调用 `EmotionInferenceAPI` 的 `analyze_single_text(text, "top_k")` 方法。
-2.  从返回的 `[("情绪名", 分数), ...]` 列表中提取前两个情绪。
+1.  调用 `EmotionInferenceAPI` 的 `analyze_single_text(text, "top_k", k=7)` 方法，获取排名前**7**的情绪。
+2.  将这7个情绪的名称和分数，打包成一个对象数组 `topEmotions`。
 3.  动态拼接成 `title` 和 `description` 字符串。
 
 **JSON结构:**
@@ -26,15 +24,22 @@
   "result": {
     "analysisResult": {
       "title": "深度悲伤",
-      "description": "系统捕捉到您内心的孤独与失落感，正在为您寻找共鸣与慰藉。"
+      "description": "我们感受到了您内心深处的悲伤，它似乎还交织着对过往的思念...",
+      "topEmotions": [
+        {"name": "悲伤", "score": 0.85},
+        {"name": "思念", "score": 0.60},
+        {"name": "疲倦", "score": 0.40},
+        {"name": "平静", "score": 0.30},
+        {"name": "孤独", "score": 0.25},
+        {"name": "失落", "score": 0.20},
+        {"name": "无助", "score": 0.15}
+      ]
     }
   }
 }
-前端对应关系:
+```
 
-result.analysisResult.title -> 将被填入到 id="emotion-title" 的HTML元素中。
-
-result.analysisResult.description -> 将被填入到 id="emotion-description" 的HTML元素中。
+**核心修改**: 我们现在要求后端返回排名前7的情绪，并以一个topEmotions数组的形式提供。
 
 状态 2: 知识图谱解码完成 (KG_COMPLETE)
 触发时机: 后端 background_task 调用知识图谱模块 (EmotionMusicBridge) 并成功获得结果后。

@@ -50,7 +50,7 @@ tasks_status = {}
 def background_task(session_id, text, duration="3min"):
     """
     这个函数在独立的线程中运行，负责编排和调用所有内部API。
-    (最终完整版 V2 - 调整了延时以匹配前端节奏)
+    (最终完整版 V4 - 修复了因"能量核心"动画而跳过知识图谱阶段的问题)
     """
     global tasks_status
     print(f"[{session_id}] 后台任务已启动，处理文本: '{text}'")
@@ -61,18 +61,20 @@ def background_task(session_id, text, duration="3min"):
         top_emotions = emotion_analyzer.analyze_single_text(text, output_format='top_k')
         
         primary_emotion = top_emotions[0][0] if top_emotions else "平静"
-        secondary_emotion = top_emotions[1][0] if len(top_emotions) > 1 else "稳定"
         analysis_result_package = {
             "title": primary_emotion,
-            "description": f"系统捕捉到您的核心情绪是“{primary_emotion}”，并伴有“{secondary_emotion}”的感觉。正在为您解码匹配的音乐密码..."
+            "description": f"我们感受到了您内心深处的{primary_emotion}，它似乎还交织着对过往的思念...",
+            "topEmotions": [
+                {"name": emo[0], "score": float(emo[1])} for emo in top_emotions
+            ]
         }
         tasks_status[session_id]['result']['analysisResult'] = analysis_result_package
         tasks_status[session_id]['status'] = 'AC_COMPLETE'
         print(f"[{session_id}] 状态更新 -> AC_COMPLETE")
         
-        # ★★★ 关键修改 ★★★
-        # 前端在这一步会展示3.5秒，所以后端至少要停留这么久。我们设为4秒。
-        time.sleep(4) 
+        # ★★★ 关键修复 ★★★
+        # 前端在这一步会"表演"7秒，所以后端至少要停留这么久。我们设为7.5秒。
+        time.sleep(7.5) 
 
         # --- 步骤 2: 知识图谱 ---
         tasks_status[session_id]['status'] = 'KG_PENDING'
@@ -92,7 +94,6 @@ def background_task(session_id, text, duration="3min"):
         tasks_status[session_id]['status'] = 'KG_COMPLETE'
         print(f"[{session_id}] 状态更新 -> KG_COMPLETE")
 
-        # ★★★ 关键修改 ★★★
         # 前端在这一步会展示4秒，所以后端至少要停留这么久。我们设为4.5秒。
         time.sleep(4.5)
 
@@ -101,13 +102,12 @@ def background_task(session_id, text, duration="3min"):
         therapy_rec = kg_full_result.get("therapy_recommendation", {})
         iso_principle_package = {
             "title": f"正在应用：{therapy_rec.get('principle', '同质原理 (ISO Principle)')}",
-            "description": therapy_rec.get('explanation', "“同质原理”是音乐治疗的核心理念之一，意指用与您当前情绪状态相似的音乐来引导共鸣，从而达到宣泄、接受并最终转化的疗愈效果。")
+            "description": therapy_rec.get('explanation', "\"同质原理\"是音乐治疗的核心理念之一...")
         }
         tasks_status[session_id]['result']['isoPrinciple'] = iso_principle_package
         tasks_status[session_id]['status'] = 'ISO_PRINCIPLE_READY'
         print(f"[{session_id}] 状态更新 -> ISO_PRINCIPLE_READY")
         
-        # ★★★ 关键修改 ★★★
         # 前端在这一步会展示5秒，所以后端至少要停留这么久。我们设为5.5秒。
         time.sleep(5.5)
 
@@ -121,7 +121,6 @@ def background_task(session_id, text, duration="3min"):
             video_name = first_song.get("video_name", "unknown_video")
             R2_PUBLIC_URL = "https://pub-263b71ccbad648af97436d9666ca337e.r2.dev"
             full_url = f"{R2_PUBLIC_URL}/segments_{duration}/{video_name}.mp4"
-            
             video_package = { "url": full_url, "title": video_name }
         else:
             video_package = { "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm", "title": "疗愈之声 (备用)" }
