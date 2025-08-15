@@ -687,7 +687,7 @@ body {
   }
 }
 
-/* ======================== 情绪解码动画样式 ======================== */
+/* ======================== 情绪解码动画样式 (V3 - 三阶段版) ======================== */
 .emotion-core-container {
     height: 280px;
     position: relative;
@@ -695,79 +695,123 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    margin-bottom: 1rem;
 }
 
-/* 扫描动画 */
-.scanner-line {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: #5e72e4;
-    box-shadow: 0 0 10px #5e72e4, 0 0 20px #5e72e4;
-    opacity: 0;
-    animation: scan 3.5s ease-out forwards;
-}
-@keyframes scan {
-    0% { top: 0; opacity: 1; }
-    90% { top: 100%; opacity: 1; }
-    100% { top: 100%; opacity: 0; }
-}
-.scanner-text {
-    color: #8898aa;
+/* --- 阶段一样式 --- */
+.analyzer-text-container {
     font-family: 'Courier New', Courier, monospace;
-    opacity: 0;
-    animation: fadeInOut 3.5s linear forwards;
+    color: var(--text-accent);
+    font-size: 1rem;
+    text-shadow: 0 0 5px var(--text-accent);
 }
-@keyframes fadeInOut {
-    0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
+.analyzer-text {
+    border-right: .15em solid var(--text-accent); /* 模拟打字光标 */
+    white-space: nowrap;
+    overflow: hidden;
+    animation: typing 1s steps(40, end), blink-caret .75s step-end infinite;
 }
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--text-accent); }
 }
 
-/* 能量核心和卫星 */
+/* --- 阶段二样式 --- */
+.radar-grid {
+    position: absolute;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: 
+        repeating-radial-gradient(rgba(0, 212, 255, 0) 0, rgba(0, 212, 255, 0) 49px, rgba(0, 212, 255, 0.1) 50px, rgba(0, 212, 255, 0.1) 51px),
+        repeating-linear-gradient(0deg, transparent 0, transparent 49px, rgba(0, 212, 255, 0.1) 50px, rgba(0, 212, 255, 0.1) 51px),
+        repeating-linear-gradient(90deg, transparent 0, transparent 49px, rgba(0, 212, 255, 0.1) 50px, rgba(0, 212, 255, 0.1) 51px);
+    opacity: 0;
+    transform: scale(0.8);
+    animation: fadeInGrid 1s ease forwards;
+}
+@keyframes fadeInGrid { to { opacity: 1; transform: scale(1); } }
+
+.radar-sweep {
+    position: absolute;
+    width: 2px; height: 125px;
+    background: linear-gradient(to top, rgba(94, 114, 228, 0), #5e72e4);
+    top: 15px; left: 50%;
+    transform-origin: bottom center;
+}
+@keyframes radar-sweep-anim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ★ 新增: 能量束样式 */
+.tracer-line {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(to top, rgba(0, 212, 255, 0), var(--text-accent));
+    top: 50%; left: 50%;
+    transform-origin: top center;
+    opacity: 0;
+}
+@keyframes flash-tracer {
+    0% { opacity: 0; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0; }
+}
+
 .emotion-core {
-    width: 80px; height: 80px;
+    width: 20px; height: 20px;
     background: #5e72e4;
     border-radius: 50%;
     position: absolute;
-    box-shadow: 0 0 20px #5e72e4, 0 0 40px #5e72e4, inset 0 0 10px white;
+    box-shadow: 0 0 10px #5e72e4, 0 0 20px #5e72e4, inset 0 0 5px white;
     transform: scale(0);
-    animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2s forwards;
+    animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s forwards;
 }
-@keyframes popIn { 100% { transform: scale(1); } }
+
+.emotion-satellite-container {
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
 
 .emotion-satellite {
-    position: absolute;
     background: white;
     border-radius: 50%;
+    box-shadow: 0 0 5px white, 0 0 10px var(--text-accent);
     transform: scale(0);
     transition: all 0.3s ease;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
-.emotion-satellite:hover {
-    transform: scale(2.5) !important;
-    z-index: 10;
-}
+.emotion-satellite:hover { transform: scale(2.5) !important; z-index: 10; }
 
-/* 为情绪卫星标签添加样式 */
 .satellite-label {
     position: absolute;
-    color: #8898aa; /* 使用主题色 */
-    font-size: 12px;
+    left: 100%; top: 50%;
+    transform: translateY(-50%);
+    padding-left: 10px;
+    color: var(--text-secondary);
+    font-size: 13px; /* 稍微放大一点 */
     font-weight: 500;
     opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none; /* 让标签不影响鼠标悬停 */
+    pointer-events: none;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-    white-space: nowrap; /* 防止文字换行 */
+    white-space: nowrap;
 }
 
-/* 确保雷达图容器能正确显示 */
-.chart-container {
-    position: relative;
-    height: 280px; /* 或者你认为合适的高度 */
-    width: 100%;
+/* --- 阶段三样式 --- */
+/* ★ 新增: 抚慰金句样式 */
+.healing-comfort-text {
+    color: var(--text-accent);
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
+    opacity: 0; /* 由动画控制显示 */
+    font-style: italic;
+}
+
+/* --- 通用动画 --- */
+@keyframes popIn { 100% { transform: scale(1); } }
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes fadeInLabel {
+    from { opacity: 0; transform: translateY(-50%) translateX(-10px); }
+    to { opacity: 0.9; transform: translateY(-50%) translateX(0); }
 }

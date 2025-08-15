@@ -277,48 +277,98 @@ function startPolling() {
 function handleState(data) {
     if (data.status === 'AC_COMPLETE') {
         clearInterval(pollingIntervalId); // 暂停轮询
-        
+
         const container = document.getElementById('emotion-core-container');
         const titleEl = document.getElementById('emotion-title');
         const descriptionEl = document.getElementById('emotion-description');
-        
+
+        // 准备工作：清空旧内容并切换舞台
         container.innerHTML = '';
         titleEl.innerText = '';
         descriptionEl.innerText = '';
+        // 移除可能存在的旧抚慰文字
+        const oldComfortText = document.getElementById('comfort-text');
+        if(oldComfortText) oldComfortText.remove();
+
         switchToStage('step-emotion-analysis');
 
-        // ★★★ 修复3: 延长"27维分析"的展示时间 ★★★
-        const scannerText = document.createElement('div');
-        scannerText.className = 'scanner-text';
-        scannerText.innerText = 'Analyzing 27 emotional dimensions...'; // 保持英文以凸显科技感
-        container.appendChild(scannerText);
-
-        const scannerLine = document.createElement('div');
-        scannerLine.className = 'scanner-line';
-        container.appendChild(scannerLine);
+        // ================== 全新三阶段情绪解码动画 ==================
         
-        // 将扫描动画的时长从2秒延长到3.5秒
-        const SCAN_DURATION = 3500;
+        // --- 阶段一: AI分析启动 (持续约 3.5 秒) ---
+        const analyzerContainer = document.createElement('div');
+        analyzerContainer.className = 'analyzer-text-container';
+        container.appendChild(analyzerContainer);
 
-        // "能量核心可视化"阶段
+        const analysisSteps = [
+            "连接情绪神经网络...",
+            "解析27维情绪向量...",
+            "正在构建您的情绪图谱..."
+        ];
+        let stepIndex = 0;
+        analyzerContainer.innerHTML = `<span class="analyzer-text">${analysisSteps[stepIndex]}</span>`;
+        const typingInterval = setInterval(() => {
+            stepIndex++;
+            if (stepIndex < analysisSteps.length) {
+                analyzerContainer.innerHTML = `<span class="analyzer-text">${analysisSteps[stepIndex]}</span>`;
+            } else {
+                clearInterval(typingInterval);
+            }
+        }, 1200);
+
+
+        // --- 阶段二: 情绪图谱构建 (在阶段一结束后开始) ---
         setTimeout(() => {
-            container.innerHTML = ''; // 清空扫描动画
-            const emotions = data.result.analysisResult.topEmotions;
+            // 清理阶段一内容，准备渲染图谱
+            container.innerHTML = '';
 
+            const SWEEP_DURATION = 3000; // 雷达扫描一圈3秒
+
+            // 渲染雷达背景和扫描指针
+            const radarGrid = document.createElement('div');
+            radarGrid.className = 'radar-grid';
+            container.appendChild(radarGrid);
+
+            const radarSweep = document.createElement('div');
+            radarSweep.className = 'radar-sweep';
+            radarSweep.style.animation = `radar-sweep-anim ${SWEEP_DURATION}ms linear 1`;
+            container.appendChild(radarSweep);
+
+            // 渲染情绪核心
             const core = document.createElement('div');
             core.className = 'emotion-core';
             container.appendChild(core);
 
-            const radius = 110;
-            emotions.slice(1).forEach((emo, index) => {
-                const angle = (index / (emotions.length - 1)) * 2 * Math.PI - (Math.PI / 2); // 调整起始角度
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                const size = 5 + (emo.score || 0) * 15;
+            // 准备渲染情绪卫星
+            const emotions = data.result.analysisResult.topEmotions;
+            const MIN_RADIUS = 30;  // 最近半径
+            const MAX_RADIUS = 115; // 最远半径
 
-                // ★★★ 修复2: 为卫星创建容器和标签 ★★★
+            emotions.slice(1).forEach((emo, index) => {
+                const score = emo.score || 0;
+                
+                // ★ 核心改进: 半径由情绪分数决定
+                const finalRadius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * score;
+                
+                const angleRad = (index / (emotions.length - 1)) * 2 * Math.PI - (Math.PI / 2);
+                const angleDeg = (angleRad * 180 / Math.PI) + 90;
+                
+                const x = Math.cos(angleRad) * finalRadius;
+                const y = Math.sin(angleRad) * finalRadius;
+                const size = 5 + score * 10; // 大小也稍微和分数关联
+
+                // 创建能量束
+                const tracer = document.createElement('div');
+                tracer.className = 'tracer-line';
+                tracer.style.height = `${finalRadius}px`;
+                tracer.style.transform = `rotate(${angleDeg - 90}deg)`;
+
+                // 计算出现延迟
+                const appearDelay = (angleDeg / 360) * SWEEP_DURATION;
+                tracer.style.animation = `flash-tracer 0.6s ease-out ${appearDelay}ms forwards`;
+                
+                // 创建卫星容器
                 const satelliteContainer = document.createElement('div');
-                satelliteContainer.style.position = 'absolute';
+                satelliteContainer.className = 'emotion-satellite-container';
                 satelliteContainer.style.left = `calc(50% + ${x}px)`;
                 satelliteContainer.style.top = `calc(50% + ${y}px)`;
                 
@@ -326,33 +376,42 @@ function handleState(data) {
                 satellite.className = 'emotion-satellite';
                 satellite.style.width = `${size}px`;
                 satellite.style.height = `${size}px`;
-                satellite.style.animationDelay = `${(SCAN_DURATION / 1000) + 0.2 + index * 0.1}s`;
-                satellite.title = `${emo.name} (${((emo.score || 0) * 100).toFixed(0)}%)`;
+                satellite.style.animation = `popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${appearDelay + 100}ms forwards`;
                 
+                // ★ 核心改进: 标签显示百分比
                 const label = document.createElement('span');
                 label.className = 'satellite-label';
-                label.innerText = emo.name;
-                // 根据位置调整标签位置，避免重叠
-                label.style.transform = `translate(${size/2 + 5}px, -${size/2}px)`;
-                label.style.opacity = '0.7'; // 默认显示标签
-                
+                label.innerText = `${emo.name} ${Math.round(score * 100)}%`;
+                label.style.animation = `fadeInLabel 0.5s ease-out ${appearDelay + 300}ms forwards`;
+
+                container.appendChild(tracer);
                 satelliteContainer.appendChild(satellite);
                 satelliteContainer.appendChild(label);
                 container.appendChild(satelliteContainer);
             });
 
-        }, SCAN_DURATION); // 使用新的时长
+            // --- 阶段三: 共情与抚慰 (在阶段二结束后开始) ---
+            setTimeout(() => {
+                titleEl.innerText = data.result.analysisResult.title;
+                descriptionEl.innerText = data.result.analysisResult.description;
+                titleEl.style.animation = 'fadeIn 0.5s forwards';
+                descriptionEl.style.animation = 'fadeIn 0.5s 0.2s forwards';
+                
+                // ★ 新增元素: 抚慰金句
+                const comfortText = document.createElement('p');
+                comfortText.id = 'comfort-text';
+                comfortText.className = 'healing-comfort-text';
+                comfortText.innerText = "别担心，你的所有感受，都值得被看见。";
+                descriptionEl.parentNode.appendChild(comfortText);
+                comfortText.style.animation = 'fadeIn 1s 1s forwards';
 
-        // "共情式解读"阶段
-        setTimeout(() => {
-            titleEl.innerText = data.result.analysisResult.title;
-            descriptionEl.innerText = data.result.analysisResult.description;
-            titleEl.style.animation = 'fadeIn 0.5s ease-in-out forwards';
-            descriptionEl.style.animation = 'fadeIn 0.5s ease-in-out 0.2s forwards';
-        }, SCAN_DURATION + 500); // 在扫描结束后0.5秒显示
+            }, SWEEP_DURATION + 500);
 
-        // 继续流程 (总时长 = 扫描时长 + 后续展示时长)
-        setTimeout(startPolling, SCAN_DURATION + 4000); 
+            // 等待所有动画播放完毕后，继续轮询
+            setTimeout(startPolling, SWEEP_DURATION + 5000);
+
+        }, 3500); // 阶段一总时长
+
     } 
     else if (data.status === 'KG_COMPLETE') {
         clearInterval(pollingIntervalId);
