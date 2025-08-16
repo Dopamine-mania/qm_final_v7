@@ -191,6 +191,7 @@ body {
 #stage-container {
   perspective: 1000px;
   padding: 0 15px;
+  margin-top: 5vh; /* 新增这一行 */
 }
 
 .healing-card {
@@ -814,4 +815,171 @@ body {
 @keyframes fadeInLabel {
     from { opacity: 0; transform: translateY(-50%) translateX(-10px); }
     to { opacity: 0.9; transform: translateY(-50%) translateX(0); }
+}
+
+/* ================================================================ */
+/* 最终版："认知熔炉" (Cognitive Forge) 动画样式         */
+/* ================================================================ */
+
+/* 动画总容器 */
+.cognitive-forge-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    transition: background 1s ease;
+    margin-bottom: 1rem;
+}
+
+/* 针对 repurposed ul 元素的强制样式重置 */
+#kg-details.cognitive-forge-container {
+    padding-left: 0;
+}
+
+/* 标题样式控制 */
+#kg-title {
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+/* --- 第一幕: 情绪核心 --- */
+.forge-core-sun {
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, #ffecd1, #f5b971);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; text-align: center;
+    color: #5d4a36; font-weight: 600; font-size: 0.9rem; line-height: 1.4;
+    box-shadow: 0 0 20px #f5b971, 0 0 40px #ffecd1;
+    animation: pulse-sun 3s infinite ease-in-out, fadeIn 1s forwards;
+    transition: all 1s ease;
+    opacity: 0; z-index: 10;
+}
+@keyframes pulse-sun {
+    50% { transform: scale(1.05); }
+}
+
+/* --- 第二幕: GEMS棱镜 & 光谱 --- */
+.forge-core-sun.transform-to-prism {
+    transform: scale(0.8) rotate(180deg);
+    background: radial-gradient(circle, #e0c3fc, #8ec5fc);
+    box-shadow: 0 0 20px #8ec5fc, 0 0 40px #e0c3fc;
+    border-radius: 20%;
+}
+.gems-ray {
+    position: absolute;
+    height: 2px;
+    width: calc(80px + var(--score, 0) * 120px);
+    background: linear-gradient(to right, #a8c0ff, transparent);
+    top: 50%; left: 50%;
+    transform-origin: left;
+    transform: rotate(calc(var(--i) * (360deg / 5) + 18deg)) translateY(-50%);
+    opacity: 0;
+    animation: shoot-ray 1s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation-delay: calc(var(--i) * 0.15s + 0.5s);
+}
+.gems-ray span {
+    position: absolute; right: 10px; top: -20px;
+    color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap;
+}
+@keyframes shoot-ray { to { opacity: 0.8; } }
+
+/* --- 第三幕: 知识图谱背景 & 参数节点 --- */
+.cognitive-forge-container.show-kg-background::before {
+    content: ''; position: absolute; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%231a2e4a' fill-opacity='0.4'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM91 88c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 60c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0; animation: fadeIn 2s forwards; z-index: -1;
+}
+.param-node {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(calc(var(--i) * (360deg / 7))) translateX(140px) rotate(calc(var(--i) * (-360deg / 7)));
+    display: flex; align-items: center; opacity: 0;
+    animation: pop-node 0.8s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation-delay: calc(var(--i) * 0.2s);
+    transition: opacity 1s ease, transform 0.5s ease;
+}
+@keyframes pop-node { to { opacity: 1; } }
+.param-glyph { width: 40px; height: 40px; margin-right: 10px; border: 1px solid var(--text-accent); border-radius: 50%; position: relative; }
+.param-text { display: flex; flex-direction: column; color: var(--text-secondary); }
+.param-text strong { color: var(--text-primary); }
+.param-text span { font-size: 0.8rem; }
+
+/* --- 第四幕: 合成 & 总结 --- */
+.cognitive-forge-container.synthesized .param-node,
+.cognitive-forge-container.synthesized .gems-ray,
+.cognitive-forge-container.synthesized .forge-core-sun { opacity: 0.2; }
+.cognitive-forge-container.synthesized .param-node { transform: translate(-50%, -50%) rotate(calc(var(--i) * (360deg / 7))) translateX(130px) rotate(calc(var(--i) * (-360deg / 7))) scale(0.95); }
+.therapy-summary-card {
+    /* 移除所有 position, top, left, bottom, transform 属性！ */
+    width: 90%;
+    max-width: 450px; /* 增加最大宽度，防止在大屏幕上过宽 */
+    background: var(--bg-card);
+    border: var(--border-glass);
+    border-radius: 12px;
+    padding: 1.5rem; /* 增加一点内边距 */
+    text-align: center;
+    opacity: 0;
+    animation: fadeInUp 1.2s forwards; /* 动画时间稍长一点 */
+}
+
+/* ======================================== */
+/* CSS 音乐参数图标 (由JS的data属性驱动) */
+/* ======================================== */
+.param-glyph::before, .param-glyph::after { content: ''; position: absolute; }
+/* Tempo */
+.param-glyph[data-type="tempo"]::before { width: 2px; height: 12px; background: var(--text-accent); left: 50%; top: 8px; transform: translateX(-50%) rotate(-25deg); }
+.param-glyph[data-type="tempo"]::after { width: 4px; height: 4px; background: var(--text-accent); border-radius: 50%; left: 50%; bottom: 8px; transform: translateX(-50%); }
+/* Mode */
+.param-glyph[data-type="mode"][data-value*="major"]::before { width: 10px; height: 10px; border: 2px solid var(--text-accent); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.param-glyph[data-type="mode"][data-value*="minor"]::before { width: 10px; height: 10px; background: var(--text-accent); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+/* Dynamics */
+.param-glyph[data-type="dynamics"] { display: flex; justify-content: center; align-items: flex-end; gap: 2px; padding: 10px; }
+.param-glyph[data-type="dynamics"]::before, .param-glyph[data-type="dynamics"]::after { width: 4px; background: var(--text-accent); }
+.param-glyph[data-type="dynamics"]::before { height: 40%; }
+.param-glyph[data-type="dynamics"]::after { height: 70%; }
+/* Harmony */
+.param-glyph[data-type="harmony"]::before, .param-glyph[data-type="harmony"]::after { width: 20px; height: 10px; border: 2px solid var(--text-accent); border-top: none; left: 50%; transform: translateX(-50%); }
+.param-glyph[data-type="harmony"][data-value*="consonant"]::before { border-radius: 0 0 10px 10px; top: 8px; }
+.param-glyph[data-type="harmony"][data-value*="consonant"]::after { border-radius: 0 0 10px 10px; top: 18px; }
+/* Timbre */
+.param-glyph[data-type="timbre"]::before { width: 20px; height: 10px; border: 2px solid var(--text-accent); border-top: none; border-bottom: none; top: 14px; left: 9px; border-radius: 0 50% 50% 0; transform: rotate(-45deg); }
+/* Register */
+.param-glyph[data-type="register"]::before, .param-glyph[data-type="register"]::after { width: 18px; height: 2px; background: var(--text-accent); left: 10px; }
+.param-glyph[data-type="register"]::before { top: 14px; }
+.param-glyph[data-type="register"]::after { top: 24px; }
+.param-glyph[data-type="register"][data-value*="high"] span { position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%; left: 16px; top: 8px; }
+.param-glyph[data-type="register"][data-value*="medium"] span { position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%; left: 16px; top: 17px; }
+.param-glyph[data-type="register"][data-value*="low"] span { position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%; left: 16px; top: 26px; }
+/* Density */
+.param-glyph[data-type="density"][data-value*="dense"] { background-image: radial-gradient(white 1px, transparent 0), radial-gradient(white 1px, transparent 0); background-size: 8px 8px; background-position: 0 0, 4px 4px; }
+.param-glyph[data-type="density"][data-value*="sparse"] { background-image: radial-gradient(white 1.5px, transparent 0); background-size: 15px 15px; }
+
+/* 通用动画 */
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes fadeInUp { 
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ======================== 调试专用CSS ======================== */
+/* 用蓝色框标出最外层的舞台容器 */
+#stage-container {
+  outline: 2px solid dodgerblue;
+}
+
+/* 用红色框标出四幕动画的直接父容器 */
+#kg-details.cognitive-forge-container {
+  outline: 2px solid red;
+}
+
+/* 用绿色框标出"疗愈焦点"组件 */
+.therapy-summary-card {
+  outline: 2px solid limegreen;
+}
+/* ============================================================= */
+
+/* 这个样式只在最终幕生效，用Flexbox实现完美居中 */
+.cognitive-forge-container.forge-final-stage {
+    display: flex;
+    align-items: center;     /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
 }

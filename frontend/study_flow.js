@@ -415,20 +415,90 @@ function handleState(data) {
     } 
     else if (data.status === 'KG_COMPLETE') {
         clearInterval(pollingIntervalId);
-        const el = stages['step-kg-result'];
-        el.querySelector('#kg-title').innerText = data.result.kgResult.title;
-        const detailsContainer = el.querySelector('#kg-details');
-        detailsContainer.innerHTML = ''; // 清空旧内容
-        data.result.kgResult.details.forEach((item, index) => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item border-0';
-            li.innerText = `✅ ${item}`;
-            li.style.animationDelay = `${index * 0.1}s`; //  staggered animation
-            detailsContainer.appendChild(li);
-        });
 
+        const el = stages['step-kg-result'];
+        const titleEl = el.querySelector('#kg-title');
+        const container = el.querySelector('#cognitive-forge-container');
+        const detailsEl = el.querySelector('#kg-details');
+
+        container.innerHTML = '';
+        detailsEl.innerHTML = '';
+        titleEl.innerText = '';
+        // 确保移除可能存在的旧样式类
+        container.className = 'cognitive-forge-container';
+
+        const resultData = data.result.kgResult;
         switchToStage('step-kg-result');
-        setTimeout(startPolling, 4000);
+
+        // === 第1-3幕: 知识图谱动态展示 (总时长约 10 秒) ===
+        // 我们将前三幕合并为一个更流畅的动画序列
+        
+        // 阶段一: 显示GEMS映射
+        setTimeout(() => {
+            titleEl.innerText = 'GEMS 映射原理';
+            container.innerHTML = ''; // 清空舞台
+            const topEmotions = resultData.emotion_analysis.top_emotions.slice(0, 5);
+            topEmotions.forEach((emo, index) => {
+                const ray = document.createElement('div');
+                ray.className = 'gems-ray';
+                ray.style.setProperty('--i', index);
+                ray.style.setProperty('--score', emo[1]);
+                const label = document.createElement('span');
+                label.innerText = `${emo[0]} ${(emo[1] * 100).toFixed(0)}%`;
+                ray.appendChild(label);
+                container.appendChild(ray);
+            });
+        }, 500);
+
+        // 阶段二: 转换为知识图谱节点
+        setTimeout(() => {
+            titleEl.innerText = '知识图谱提取';
+            container.innerHTML = ''; // 再次清空舞台
+            container.classList.add('show-kg-background');
+            const musicParams = resultData.music_parameters;
+            const paramsToShow = ['tempo', 'mode', 'dynamics', 'harmony', 'timbre', 'register', 'density'];
+            paramsToShow.forEach((key, index) => {
+                if (!musicParams[key]) return;
+                const param = musicParams[key];
+                const node = document.createElement('div');
+                node.className = 'param-node';
+                node.style.setProperty('--i', index);
+                node.innerHTML = `
+                    <div class="param-glyph" data-type="${key}" data-value="${param}">
+                        ${key === 'register' ? '<span></span>' : ''} 
+                    </div>
+                    <div class="param-text">
+                        <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong>
+                        <span>${param} ${key === 'tempo' ? 'BPM' : ''}</span>
+                    </div>
+                `;
+                container.appendChild(node);
+            });
+        }, 4000); // 在第4秒开始
+
+        // === 第四幕: 最终疗愈处方 (在第10秒出现) ===
+        setTimeout(() => {
+            titleEl.innerText = '疗愈处方已生成';
+            container.innerHTML = ''; // ★★★ 最终清空舞台，为最后内容做准备 ★★★
+            container.classList.remove('show-kg-background'); // 移除背景
+            
+            // ★★★ 核心修复：为最后阶段添加一个特殊的类名 ★★★
+            container.classList.add('forge-final-stage');
+
+            const summaryData = resultData.therapy_recommendation;
+            const summaryCard = document.createElement('div');
+            summaryCard.className = 'therapy-summary-card';
+            summaryCard.style.opacity = '0'; // 初始不可见，让动画更平滑
+            summaryCard.innerHTML = `
+                <h4>疗愈焦点: ${summaryData.primary_focus}</h4>
+                <p>${summaryData.therapy_approach}</p>
+            `;
+            container.appendChild(summaryCard);
+
+        }, 10000); // 在第10秒准时上演最终幕
+
+        // 恢复轮询，让流程可以继续
+        setTimeout(startPolling, 13500);
     }
     else if (data.status === 'ISO_PRINCIPLE_READY') {
         clearInterval(pollingIntervalId);
@@ -640,5 +710,126 @@ async function initializeParticles() {
     }
 }
 // =================================================================
+
+// ======================== 最终版情绪解码动画系统 (13.5秒总时长) ========================
+function startFinalCognitiveForgeAnimation(kgData, container, titleEl, detailsEl) {
+    console.log('🧠 开始最终版情绪解码动画 - 13.5秒总时长');
+    
+    // 清理旧元素
+    const existingElements = container.querySelectorAll('.cognitive-forge-stage');
+    existingElements.forEach(el => el.remove());
+    
+    // 获取音乐参数数据，提供更好的错误处理
+    const musicParams = kgData?.music_parameters || {};
+    const therapy = kgData?.therapy_recommendation || {};
+    
+    // 阶段1: 情绪解构 (0.5s延迟开始)
+    setTimeout(() => {
+        console.log('🔬 阶段1: 情绪解构 (0.5s)');
+        container.innerHTML = `
+            <div class="cognitive-forge-stage deconstruction-stage">
+                <div class="neural-network">
+                    <div class="network-node primary-node" data-emotion="主要情绪"></div>
+                    <div class="network-node secondary-node" data-emotion="次要情绪"></div>
+                    <div class="network-node tertiary-node" data-emotion="背景情绪"></div>
+                    <div class="connection-line line1"></div>
+                    <div class="connection-line line2"></div>
+                    <div class="connection-line line3"></div>
+                </div>
+                <div class="stage-label">情绪解构分析中...</div>
+            </div>
+        `;
+        
+        // 阶段2: GEMS映射 (3.5s后开始)
+        setTimeout(() => {
+            console.log('💎 阶段2: GEMS映射 (3.5s)');
+            container.innerHTML = `
+                <div class="cognitive-forge-stage gems-mapping-stage">
+                    <div class="gems-container">
+                        <div class="music-param-node tempo-node" data-value="${musicParams.tempo || '60-80 BPM'}" title="节奏">♩</div>
+                        <div class="music-param-node mode-node" data-value="${musicParams.mode || '大调'}" title="调式">♪</div>
+                        <div class="music-param-node dynamics-node" data-value="${musicParams.dynamics || '中等'}" title="动态">♫</div>
+                        <div class="music-param-node harmony-node" data-value="${musicParams.harmony || '协和'}" title="和声">♬</div>
+                        <div class="music-param-node timbre-node" data-value="${musicParams.timbre || '温暖'}" title="音色">♭</div>
+                        <div class="music-param-node register-node" data-value="${musicParams.register || '中音'}" title="音域">♯</div>
+                        <div class="music-param-node density-node" data-value="${musicParams.density || '中等'}" title="密度">♮</div>
+                    </div>
+                    <div class="stage-label">GEMS参数映射中...</div>
+                </div>
+            `;
+            
+            // 阶段3: 知识图谱提取 (6.5s后开始)
+            setTimeout(() => {
+                console.log('🕸️ 阶段3: 知识图谱提取 (6.5s)');
+                container.innerHTML = `
+                    <div class="cognitive-forge-stage knowledge-extraction-stage">
+                        <div class="kg-web">
+                            <div class="kg-node central" data-type="central">情绪核心</div>
+                            <div class="kg-node emotion" data-type="emotion">情绪分析</div>
+                            <div class="kg-node music" data-type="music">音乐参数</div>
+                            <div class="kg-node therapy" data-type="therapy">疗愈方案</div>
+                            <div class="kg-edge edge1"></div>
+                            <div class="kg-edge edge2"></div>
+                            <div class="kg-edge edge3"></div>
+                            <div class="kg-edge edge4"></div>
+                            <div class="kg-edge edge5"></div>
+                            <div class="kg-edge edge6"></div>
+                        </div>
+                        <div class="stage-label">知识图谱构建中...</div>
+                    </div>
+                `;
+                
+                // 阶段4: 疗愈处方合成 (10s后开始)
+                setTimeout(() => {
+                    console.log('💊 阶段4: 疗愈处方合成 (10s)');
+                    container.innerHTML = `
+                        <div class="cognitive-forge-stage prescription-synthesis-stage">
+                            <div class="prescription-container">
+                                <div class="prescription-icon">💊</div>
+                                <div class="synthesis-glow"></div>
+                                <div class="prescription-details">
+                                    <div class="prescription-line">焦点: ${therapy.primary_focus || '情绪平衡'}</div>
+                                    <div class="prescription-line">方法: ${therapy.therapy_approach || '音乐疗愈'}</div>
+                                    <div class="prescription-line">时长: ${therapy.session_duration || '20-30分钟'}</div>
+                                </div>
+                            </div>
+                            <div class="stage-label">疗愈处方合成完成</div>
+                        </div>
+                    `;
+                    
+                    // 动画完成后显示最终结果 (13s后)
+                    setTimeout(() => {
+                        console.log('✅ 最终版动画完成，显示结果');
+                        container.innerHTML = ''; // 清理动画容器
+                        
+                        // 显示标题
+                        titleEl.innerText = kgData.title || '疗愈处方已生成';
+                        titleEl.style.opacity = '0';
+                        titleEl.style.animation = 'fadeIn 0.5s forwards';
+                        
+                        // 显示详细信息列表
+                        const details = kgData.details || [
+                            "音乐主题: 舒缓疗愈",
+                            "建议节奏: 60-80 BPM",
+                            "调式: 大调"
+                        ];
+                        
+                        detailsEl.innerHTML = ''; // 清空现有内容
+                        details.forEach((item, index) => {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item border-0';
+                            li.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${item}`;
+                            li.style.opacity = '0';
+                            li.style.animationDelay = `${index * 0.15}s`;
+                            li.style.animation = 'fadeInUp 0.6s forwards';
+                            detailsEl.appendChild(li);
+                        });
+                        
+                    }, 3000); // 从阶段4开始后3秒显示结果
+                }, 3500); // 10s - 6.5s = 3.5s
+            }, 3000); // 6.5s - 3.5s = 3s  
+        }, 3000); // 3.5s - 0.5s = 3s
+    }, 500); // 0.5s延迟
+}
 
 // ========================================================================

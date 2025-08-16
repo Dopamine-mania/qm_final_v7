@@ -44,7 +44,7 @@
                 </div>
             </div>
         </nav>
-        <div class="container-fluid py-5 d-flex align-items-center justify-content-center" style="min-height: 85vh;">
+        <div class="container-fluid pt-4 d-flex justify-content-center" style="min-height: 85vh;">
             <div id="stage-container" class="col-lg-8 col-md-10">
                 
                 <!-- 输入阶段 -->
@@ -83,15 +83,14 @@
                 <!-- 知识图谱结果阶段 -->
                 <div id="step-kg-result" class="stage-card healing-card d-none">
                     <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <div class="healing-icon healing-icon-kg mb-3">
-                                <i class="fas fa-prescription-bottle-medical"></i>
-                            </div>
+                        <div class="text-center">
                             <h4 id="kg-title" class="healing-title"></h4>
+
+                            <div id="cognitive-forge-container" class="cognitive-forge-container">
+                                </div>
                         </div>
-                        <div class="healing-prescription">
-                            <ul id="kg-details" class="healing-list"></ul>
-                        </div>
+
+                        <ul id="kg-details" class="healing-list list-group list-group-flush" style="background: transparent;"></ul>
                     </div>
                 </div>
 

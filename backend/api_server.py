@@ -84,20 +84,47 @@ def background_task(session_id, text, duration="3min"):
         kg_full_result = kg_bridge.analyze_emotion_and_recommend_music(emotion_vector=emotion_vector, duration=duration, top_k=1)
         
         music_params = kg_full_result.get("music_parameters", {})
+        emotion_analysis = kg_full_result.get("emotion_analysis", {})
+        emotion_context = kg_full_result.get("emotion_context", {})
+        therapy_recommendation = kg_full_result.get("therapy_recommendation", {})
+        
+        # 构建完整的KG结果包，包含四阶段动画所需的所有数据
         kg_result_package = {
             "title": "疗愈处方已生成",
+            "emotion_analysis": {
+                "max_emotion": emotion_analysis.get("max_emotion", ("未知", 0.0)),
+                "top_emotions": emotion_analysis.get("top_emotions", [])
+            },
+            "music_parameters": {
+                "tempo": music_params.get("tempo", "60-80 BPM"),
+                "mode": music_params.get("mode", "大调"),
+                "dynamics": music_params.get("dynamics", "中等"),
+                "harmony": music_params.get("harmony", "协和"),
+                "timbre": music_params.get("timbre", "温暖"),
+                "register": music_params.get("register", "中音"),
+                "density": music_params.get("density", "中等"),
+                "theme": music_params.get("theme", "舒缓疗愈")
+            },
+            "emotion_context": emotion_context,
+            "therapy_recommendation": {
+                "primary_focus": therapy_recommendation.get("primary_focus", "情绪平衡"),
+                "therapy_approach": therapy_recommendation.get("therapy_approach", "音乐疗愈"),
+                "session_duration": therapy_recommendation.get("session_duration", "20-30分钟"),
+                "precautions": therapy_recommendation.get("precautions", [])
+            },
             "details": [
-                f"音乐主题: {music_params.get('theme', '未知')}",
-                f"建议节奏: {music_params.get('tempo', '未知')}",
-                f"调式: {music_params.get('mode', '未知')}"
+                f"音乐主题: {music_params.get('theme', '舒缓疗愈')}",
+                f"建议节奏: {music_params.get('tempo', '60-80 BPM')}",
+                f"调式: {music_params.get('mode', '大调')}"
             ]
         }
         tasks_status[session_id]['result']['kgResult'] = kg_result_package
         tasks_status[session_id]['status'] = 'KG_COMPLETE'
         print(f"[{session_id}] 状态更新 -> KG_COMPLETE")
 
-        # 前端在这一步会展示4秒，后端等待4.5秒。 (4.5s > 4s, OK)
-        time.sleep(4.5)
+        # ★★★ 最终节奏同步 ★★★
+        # 前端"认知熔炉"动画总时长约13秒，我们将后端等待时间设为13.5秒。
+        time.sleep(15.5)
 
         # --- 步骤 3: ISO原则 ---
         tasks_status[session_id]['status'] = 'ISO_PRINCIPLE_PENDING'
