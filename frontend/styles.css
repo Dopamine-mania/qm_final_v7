@@ -54,6 +54,7 @@ body {
     radial-gradient(circle at 40% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
 }
 
+/*
 .gradient-overlay {
   position: fixed;
   top: 0;
@@ -64,49 +65,8 @@ body {
   z-index: -2;
   pointer-events: none;
 }
+*/
 
-.floating-particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: var(--text-accent);
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: float 6s ease-in-out infinite;
-}
-
-.particle:nth-child(1) { left: 20%; animation-delay: -2s; animation-duration: 8s; }
-.particle:nth-child(2) { left: 40%; animation-delay: -4s; animation-duration: 6s; }
-.particle:nth-child(3) { left: 60%; animation-delay: -1s; animation-duration: 10s; }
-.particle:nth-child(4) { left: 80%; animation-delay: -3s; animation-duration: 7s; }
-.particle:nth-child(5) { left: 10%; animation-delay: -5s; animation-duration: 9s; }
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(100vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.3;
-  }
-  90% {
-    opacity: 0.3;
-  }
-  50% {
-    transform: translateY(-10vh) rotate(180deg);
-  }
-}
 
 /* ======================== 导航栏样式 ======================== */
 .healing-navbar {
@@ -982,4 +942,223 @@ body {
     display: flex;
     align-items: center;     /* 垂直居中 */
     justify-content: center; /* 水平居中 */
+}
+
+/* ======================================== */
+/* V2 - ISO Principle Animation Styles     */
+/* ======================================== */
+
+.iso-animation-container {
+    height: 180px; /* 动画区域高度 */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem; /* 上下波形的间距 */
+    margin: 1.5rem 0;
+    overflow: hidden;
+}
+
+.iso-waveform-wrapper {
+    position: relative;
+    opacity: 0; /* 默认隐藏，由JS控制入场 */
+    /* 为入场动画做准备 */
+    transform: translateX(-30px);
+}
+
+.iso-waveform-svg path {
+    /* ★ 核心：为SVG路径的形状(d)和颜色(stroke)添加平滑的过渡效果 */
+    transition: d 2s cubic-bezier(0.4, 0, 0.2, 1), 
+                stroke 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.iso-waveform-label {
+    position: absolute;
+    top: -20px; /* 显示在波形上方 */
+    left: 10px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+.iso-description-stage {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    min-height: 55px; /* 给予足够空间，防止文字换行时布局跳动 */
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: translateY(10px);
+}
+
+/* --- JS控制的动画类 --- */
+
+/* 入场动画 */
+.iso-enter .iso-waveform-wrapper {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 1s, transform 1s;
+}
+/* 分别为上下波形设置延迟，更有层次感 */
+.iso-enter #music-wave-wrapper {
+    transition-delay: 0.2s;
+}
+
+/* 文字动画 */
+.iso-text-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 退场动画 */
+.iso-exit .iso-waveform-wrapper,
+.iso-exit .iso-description-stage {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* ======================================== */
+/* V3 - Video Player Prelude/Epilogue Styles */
+/* ======================================== */
+
+/* 副标题样式 */
+#video-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: -0.75rem; /* 向上微调，让它离主标题更近 */
+    margin-bottom: 1rem;
+}
+
+/* "序章/尾声"遮罩层，用于承载呼吸动画 */
+.healing-overlay {
+    position: absolute;
+    inset: 0; /* 现代CSS写法，等同于 top/right/bottom/left: 0 */
+    background: rgba(10, 10, 10, 0.97); /* 一个更深的背景，增强沉浸感 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px; /* 与视频容器的圆角保持一致 */
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none; /* 默认不可交互 */
+    transition: opacity 1.5s var(--ease-smooth);
+}
+.healing-overlay.visible {
+    opacity: 1;
+    pointer-events: auto; /* 显示时可交互 */
+}
+
+/* 呼吸光环 */
+.breathing-ring {
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--text-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--text-accent), inset 0 0 10px var(--text-accent);
+    opacity: 0;
+    transform: scale(0.9);
+    animation: pulse-ring 4s var(--ease-smooth) infinite;
+}
+/* 当遮罩层显示时，光环才开始动画 */
+.healing-overlay.visible .breathing-ring {
+    opacity: 1;
+}
+
+/* 引导文字 */
+.breathing-text {
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 1s 0.5s; /* 延迟0.5秒出现 */
+}
+.healing-overlay.visible .breathing-text {
+    opacity: 1;
+}
+
+/* 呼吸动画关键帧 */
+@keyframes pulse-ring {
+    0%   { transform: scale(0.95); opacity: 0.8; }
+    50%  { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* 视频播放器自身的淡出效果 */
+.healing-video.fade-out {
+    transition: opacity 2s var(--ease-smooth);
+    opacity: 0;
+}
+
+/* ✅ 将下面所有代码，完整粘贴到 styles.css 文件底部 */
+/* ======================================== */
+/* V4 - Emotional Horizon Background Styles */
+/* ======================================== */
+
+.emotional-horizon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -10; /* 确保它在最底层 */
+    overflow: hidden;
+    background-color: #0a0a0a; /* 设定一个纯黑基底 */
+}
+
+#particle-canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+/* "情感能量场"光晕的基础样式 */
+.aura {
+    position: absolute;
+    border-radius: 50%;
+    /* 使用 filter: blur() 来创造极其柔和、弥散的光晕效果 */
+    filter: blur(120px); 
+    opacity: 0.3;
+    /* ★ 核心：让背景色的变化有3秒的平滑过渡 */
+    transition: background-color 3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 定义三个光晕的大小、默认颜色和动画，形成丰富的层次感 */
+.aura1 {
+    width: 80vw;
+    height: 80vh;
+    /* 使用CSS变量，方便JS后续控制颜色 */
+    background-color: var(--aura-color1, #0066ff); 
+    animation: move-glow 25s linear infinite alternate;
+    top: -30%;
+    left: -40%;
+}
+
+.aura2 {
+    width: 70vw;
+    height: 70vh;
+    background-color: var(--aura-color2, #8b5cf6);
+    animation: move-glow 30s linear infinite alternate-reverse;
+    bottom: -40%;
+    right: -30%;
+}
+
+.aura3 {
+    width: 60vw;
+    height: 60vh;
+    background-color: var(--aura-color3, #00d4ff);
+    animation: move-glow 20s linear infinite alternate;
+    top: 10%;
+    right: -20%;
+}
+
+/* 光晕的移动动画，让背景永远"活着" */
+@keyframes move-glow {
+    from {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    to {
+        transform: translate(10vw, 15vh) rotate(180deg);
+    }
 }

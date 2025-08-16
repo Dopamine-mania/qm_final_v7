@@ -44,85 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ======================== 重新开始功能 ========================
-document.addEventListener('DOMContentLoaded', () => {
-    const restartButton = document.getElementById('restart-button');
-    
-    if (restartButton) {
-        restartButton.addEventListener('click', () => {
-            // 重置整个应用状态
-            resetApplication();
-        });
-    }
-});
-
-function resetApplication() {
-    // 1. 清空用户输入
-    const userInput = document.getElementById('user-input');
-    if (userInput) {
-        userInput.value = '';
-    }
-    
-    // 2. 隐藏所有步骤卡片
-    const stepCards = document.querySelectorAll('.stage-card');
-    stepCards.forEach(card => {
-        card.classList.add('d-none');
-        card.classList.remove('fade-in');
-    });
-    
-    // 3. 显示输入步骤
-    const stepInput = document.getElementById('step-input');
-    if (stepInput) {
-        stepInput.classList.remove('d-none');
-        stepInput.classList.add('fade-in');
-    }
-    
-    // 4. 重置按钮状态
-    const submitButton = document.getElementById('submit-button');
-    if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.innerHTML = `
-            <i class="fas fa-heart-pulse me-2"></i>
-            ${document.documentElement.lang === 'zh' ? '开启疗愈之旅' : 'Start Healing Journey'}
-        `;
-    }
-    
-    // 5. 隐藏重新开始按钮
-    const restartButton = document.getElementById('restart-button');
-    if (restartButton) {
-        restartButton.classList.add('d-none');
-    }
-    
-    // 6. 停止视频播放
-    const healingVideo = document.getElementById('healing-video');
-    if (healingVideo) {
-        healingVideo.pause();
-        healingVideo.currentTime = 0;
-        healingVideo.src = '';
-    }
-    
-    // 7. 清除进度条动画
-    const progressFill = document.querySelector('.healing-progress-fill');
-    if (progressFill) {
-        progressFill.style.animation = 'none';
-        progressFill.style.width = '0%';
-    }
-    
-    // 8. 重新聚焦到输入框
-    setTimeout(() => {
-        if (userInput) {
-            userInput.focus();
-        }
-    }, 300);
-    
-    // 9. 滚动到顶部
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-    
-    console.log('应用已重置，准备新的疗愈之旅');
-}
-// ==============================================================
 
 
 // ======================== 模拟后端API (严格遵守合同V1.2) ========================
@@ -215,6 +136,50 @@ let pollingIntervalId = null;
 let currentStageId = 'step-input'; // 记录当前显示的舞台ID
 let emotionChart = null; // 情绪雷达图实例
 let particlesInstance = null; // 粒子效果实例
+
+// 1. 【新增】放在文件顶部或全局区域的辅助函数
+function formatVideoTitle(filename) {
+    const parts = filename.split('_'); // 例: "56_3min_09" -> ["56", "3min", "09"]
+    const mainTitle = "一段专属您的心灵之旅";
+    let subtitle = "疗愈方案";
+
+    if (parts.length >= 2) {
+        // 从文件名提取数字部分，组成编号
+        subtitle = `疗愈方案编号：EH-${parts[0]}-${parts[2] || '00'}`;
+    }
+    return { mainTitle, subtitle };
+}
+
+// 【新增】一个可复用的、用于平滑处理音量淡入淡出的函数
+function fadeAudio(videoElement, endVolume, duration) {
+    const startVolume = videoElement.volume;
+    const intervalTime = 50; // 每50毫秒调整一次音量
+    const stepCount = duration / intervalTime;
+    const volumeStep = (endVolume - startVolume) / stepCount;
+
+    // 如果音量已经达到目标值，则不执行
+    if (startVolume === endVolume) return;
+
+    const fade = setInterval(() => {
+        let newVolume = videoElement.volume + volumeStep;
+
+        // 确保音量不会超出 0.0 - 1.0 的范围
+        if (volumeStep > 0) { // Fade in
+            if (newVolume >= endVolume) {
+                newVolume = endVolume;
+                clearInterval(fade);
+            }
+        } else { // Fade out
+            if (newVolume <= endVolume) {
+                newVolume = endVolume;
+                clearInterval(fade);
+            }
+        }
+        
+        videoElement.volume = newVolume;
+
+    }, intervalTime);
+}
 
 // DOM元素获取
 const submitButton = document.getElementById('submit-button');
@@ -427,35 +392,34 @@ function handleState(data) {
         // 确保移除可能存在的旧样式类
         container.className = 'cognitive-forge-container';
 
+        // 获取分析结果数据 (注意：根据您的模拟API，数据结构路径可能是 result.kgResult)
         const resultData = data.result.kgResult;
         switchToStage('step-kg-result');
 
-        // === 第1-3幕: 知识图谱动态展示 (总时长约 10 秒) ===
-        // 我们将前三幕合并为一个更流畅的动画序列
-        
-        // 阶段一: 显示GEMS映射
+        // === 恢复原版动画：第一幕: GEMS 映射 (0.5秒后开始) ===
         setTimeout(() => {
             titleEl.innerText = 'GEMS 映射原理';
             container.innerHTML = ''; // 清空舞台
-            const topEmotions = resultData.emotion_analysis.top_emotions.slice(0, 5);
+            // 注意：这里的路径需要匹配您真实API的数据结构
+            const topEmotions = resultData.emotion_analysis?.top_emotions.slice(0, 5) || [];
             topEmotions.forEach((emo, index) => {
                 const ray = document.createElement('div');
                 ray.className = 'gems-ray';
                 ray.style.setProperty('--i', index);
-                ray.style.setProperty('--score', emo[1]);
+                ray.style.setProperty('--score', emo[1]); // emo[1] 是分数
                 const label = document.createElement('span');
-                label.innerText = `${emo[0]} ${(emo[1] * 100).toFixed(0)}%`;
+                label.innerText = `${emo[0]} ${(emo[1] * 100).toFixed(0)}%`; // emo[0] 是名称
                 ray.appendChild(label);
                 container.appendChild(ray);
             });
         }, 500);
 
-        // 阶段二: 转换为知识图谱节点
+        // === 恢复原版动画：第二幕: 知识图谱节点 (4秒后开始) ===
         setTimeout(() => {
             titleEl.innerText = '知识图谱提取';
             container.innerHTML = ''; // 再次清空舞台
             container.classList.add('show-kg-background');
-            const musicParams = resultData.music_parameters;
+            const musicParams = resultData.music_parameters || {};
             const paramsToShow = ['tempo', 'mode', 'dynamics', 'harmony', 'timbre', 'register', 'density'];
             paramsToShow.forEach((key, index) => {
                 if (!musicParams[key]) return;
@@ -474,62 +438,151 @@ function handleState(data) {
                 `;
                 container.appendChild(node);
             });
-        }, 4000); // 在第4秒开始
+        }, 4000);
 
-        // === 第四幕: 最终疗愈处方 (在第10秒出现) ===
+        // === 恢复原版动画：第三幕: 最终疗愈处方 (10秒后出现) ===
         setTimeout(() => {
             titleEl.innerText = '疗愈处方已生成';
-            container.innerHTML = ''; // ★★★ 最终清空舞台，为最后内容做准备 ★★★
-            container.classList.remove('show-kg-background'); // 移除背景
-            
-            // ★★★ 核心修复：为最后阶段添加一个特殊的类名 ★★★
+            container.innerHTML = ''; // 最终清空舞台
+            container.classList.remove('show-kg-background');
             container.classList.add('forge-final-stage');
 
-            const summaryData = resultData.therapy_recommendation;
+            const summaryData = resultData.therapy_recommendation || {};
             const summaryCard = document.createElement('div');
             summaryCard.className = 'therapy-summary-card';
-            summaryCard.style.opacity = '0'; // 初始不可见，让动画更平滑
+            summaryCard.style.opacity = '0';
             summaryCard.innerHTML = `
-                <h4>疗愈焦点: ${summaryData.primary_focus}</h4>
-                <p>${summaryData.therapy_approach}</p>
+                <h4>疗愈焦点: ${summaryData.primary_focus || '情绪平衡'}</h4>
+                <p>${summaryData.therapy_approach || '音乐引导疗愈'}</p>
             `;
             container.appendChild(summaryCard);
 
-        }, 10000); // 在第10秒准时上演最终幕
+        }, 10000);
 
-        // 恢复轮询，让流程可以继续
+        // 动画结束后，恢复轮询
         setTimeout(startPolling, 13500);
     }
     else if (data.status === 'ISO_PRINCIPLE_READY') {
         clearInterval(pollingIntervalId);
-        const el = stages['step-iso-principle'];
-        el.querySelector('#iso-title').innerText = data.result.isoPrinciple.title;
-        el.querySelector('#iso-description').innerText = data.result.isoPrinciple.description;
 
+        // 1. 获取所有新舞台的元素
+        const el = stages['step-iso-principle'];
+        const container = el.querySelector('#iso-animation-container');
+        const titleEl = el.querySelector('#iso-title');
+        const userWave = el.querySelector('#user-wave-path');
+        const musicWave = el.querySelector('#music-wave-path');
+        const description = el.querySelector('#iso-description-stage');
+
+        // 2. 定义波形的各种状态（SVG路径数据）
+        const userEmotionState = "M0,50 Q125,85 250,50 T500,50"; // 较为波动的状态
+        const initialMusicState = "M0,50 Q125,15 250,50 T500,50"; // 另一个不同的状态
+        const calmState = "M0,50 Q125,40 250,50 T500,50";      // 平静和谐的状态
+
+        // 3. 定义颜色
+        const userColor = "var(--text-accent)"; // 科技蓝
+        const healingColor = "#a78bfa"; // 疗愈紫
+
+        // 4. 重置舞台到初始状态
+        titleEl.innerText = data.result.isoPrinciple.title;
+        container.className = 'iso-animation-container';
+        description.className = 'iso-description-stage';
+        userWave.setAttribute('d', userEmotionState);
+        musicWave.setAttribute('d', initialMusicState);
+        userWave.style.stroke = userColor;
+        musicWave.style.stroke = userColor;
+        
         switchToStage('step-iso-principle');
-        setTimeout(startPolling, 5000);
+
+        // 5. 动画三幕剧开始
+        // (总时长约 12 秒)
+
+        // --- 第一幕：情绪镜象 (0.5秒后开始, 持续4秒) ---
+        setTimeout(() => {
+            container.classList.add('iso-enter'); // 波形入场
+            description.innerText = "第一步：情绪匹配 (Matching)\nAI正应用同质原理，用与您情绪频率相似的音乐建立共鸣。";
+            description.classList.add('iso-text-visible');
+
+            // 音乐波形开始同步为用户情绪波形
+            musicWave.setAttribute('d', userEmotionState);
+        }, 500);
+
+        // --- 第二幕：疗愈之桥 (4.5秒后开始, 持续4秒) ---
+        setTimeout(() => {
+            description.classList.remove('iso-text-visible'); // 旧文字淡出
+
+            setTimeout(() => { // 等待旧文字淡出后，新文字再淡入
+                 description.innerText = "第二步：同频引导 (Entrainment)\n在共鸣基础上，音乐将进行转化，温柔地引导您的情绪状态。";
+                 description.classList.add('iso-text-visible');
+            }, 600);
+           
+            // 波形开始向"平静"状态过渡，颜色也转变为"疗愈"色
+            userWave.setAttribute('d', calmState);
+            musicWave.setAttribute('d', calmState);
+            musicWave.style.stroke = healingColor;
+            userWave.style.stroke = healingColor;
+        }, 4500);
+
+        // --- 第三幕：抵达新境 (8.5秒后开始, 持续4秒) ---
+        setTimeout(() => {
+            description.classList.remove('iso-text-visible');
+
+            setTimeout(() => {
+                description.innerText = "ISO原理应用完成，即将为您呈现专属的疗愈音乐。";
+                description.classList.add('iso-text-visible');
+            }, 600);
+
+            // 最终，所有元素一起淡出
+            setTimeout(() => {
+                 container.classList.add('iso-exit');
+                 description.classList.remove('iso-text-visible');
+            }, 2000); // 在文字显示2秒后开始淡出
+
+        }, 8500);
+
+        // --- 剧终，准备进入下一阶段 ---
+        setTimeout(() => {
+            startPolling();
+        }, 12500); // 在总动画时间后，继续轮询
     }
     else if (data.status === 'VIDEO_READY') {
         clearInterval(pollingIntervalId);
+
         const el = stages['step-video-player'];
-        el.querySelector('#video-title').innerText = data.result.video.title;
-        el.querySelector('#healing-video').src = data.result.video.url;
+        const mainTitleEl = el.querySelector('#video-main-title');
+        const subtitleEl = el.querySelector('#video-subtitle');
+        const videoPlayer = el.querySelector('#healing-video');
+        const overlay = el.querySelector('#healing-overlay');
+        const overlayText = overlay.querySelector('.breathing-text');
+
+        const { mainTitle, subtitle } = formatVideoTitle(data.result.video.title);
+        mainTitleEl.innerText = mainTitle;
+        subtitleEl.innerText = subtitle;
+
+        videoPlayer.src = data.result.video.url;
+        // ★ 核心修改 1：让视频以 0 音量开始静音播放
+        videoPlayer.volume = 0;
+        videoPlayer.play(); 
 
         switchToStage('step-video-player');
-        
-        // 显示重新开始按钮
+
+        // --- 疗愈序章 ---
+        overlayText.innerText = "请跟随光环... 深呼吸...";
+        overlay.classList.remove('d-none');
+        setTimeout(() => overlay.classList.add('visible'), 100);
+
+        // 在序章视觉效果结束时，开始声音的淡入
         setTimeout(() => {
-            const restartButton = document.getElementById('restart-button');
-            if (restartButton) {
-                restartButton.classList.remove('d-none');
-                restartButton.classList.add('fade-in');
-            }
-        }, 3000); // 3秒后显示重新开始按钮
+            overlay.classList.remove('visible');
+            // ★ 核心修改 2：调用音量淡化函数，在2.5秒内将音量从0变为1
+            fadeAudio(videoPlayer, 1, 2500);
+        }, 3500);
     }
 }
 
 // UI核心切换函数
 function switchToStage(nextStageId) {
+    updateBackground(nextStageId); // ★ 在切换舞台时，立即调用背景更新函数 ★
+
     return new Promise(resolve => {
         const currentCard = stages[currentStageId];
         const nextCard = stages[nextStageId];
@@ -608,6 +661,10 @@ restartButton.addEventListener('click', async () => {
     
     // 重置会话ID
     sessionId = null;
+
+    // ★★★ 新增的核心修复代码 ★★★
+    // 在UI重置后，重新初始化情感视界背景特效
+    initializeEmotionalHorizon();
     
     // 聚焦到输入框
     userInput.focus();
@@ -630,86 +687,140 @@ endSessionButton.addEventListener('click', () => {
 });
 // =================================================================
 
-// ======================== 粒子效果初始化函数 ========================
-async function initializeParticles() {
-    // 清理旧的粒子实例
+// ✅ 用这段代码，替换掉你旧的 initializeParticles 函数
+async function initializeEmotionalHorizon() {
     if (particlesInstance) {
         particlesInstance.destroy();
-        particlesInstance = null;
     }
-    
     try {
         particlesInstance = await tsParticles.load("particle-canvas", {
             fpsLimit: 60,
             particles: {
-                number: { 
-                    value: 80, 
-                    density: { 
-                        enable: true, 
-                        value_area: 800 
-                    } 
-                },
+                number: { value: 120, density: { enable: true, value_area: 800 } },
                 color: { value: "#ffffff" },
                 shape: { type: "circle" },
-                opacity: { 
-                    value: 0.5, 
-                    random: true 
-                },
-                size: { 
-                    value: 1, 
-                    random: { 
-                        enable: true, 
-                        minimumValue: 0.5 
-                    } 
+                opacity: { value: { min: 0.1, max: 0.4 } },
+                size: { value: { min: 1, max: 3 } },
+                links: {
+                    enable: false, 
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.3,
+                    width: 1
                 },
                 move: {
                     enable: true,
-                    speed: 0.5,
+                    speed: 0.5, 
                     direction: "none",
-                    outModes: {
-                        default: "out"
-                    }
-                },
-                links: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.4,
-                    width: 1
+                    outModes: { default: "out" }
                 }
             },
-            interactivity: {
-                events: {
-                    onHover: { 
-                        enable: true, 
-                        mode: "grab" 
-                    },
-                    onClick: { 
-                        enable: true, 
-                        mode: "push" 
-                    }
-                },
-                modes: {
-                    grab: { 
-                        distance: 140, 
-                        links: { 
-                            opacity: 1 
-                        } 
-                    },
-                    push: { 
-                        quantity: 4 
-                    }
-                }
-            },
-            detectRetina: true
+            interactivity: { events: { onHover: { enable: true, mode: "grab" } } },
+            detectRetina: true,
+            background: { color: "transparent" }
         });
-        
-        console.log('✨ 粒子效果初始化成功');
+        console.log('✨ Emotional Horizon initialized successfully.');
+        updateBackground('step-input'); // 初始化后立即设置一次默认状态
     } catch (error) {
-        console.error('粒子效果初始化失败:', error);
+        console.error('Error initializing Emotional Horizon:', error);
+    }
+}
+// 确保在DOM加载后调用
+document.addEventListener('DOMContentLoaded', initializeEmotionalHorizon);
+
+// ✅ 将这个全新的函数，粘贴到 initializeEmotionalHorizon 之后
+function updateBackground(stage) {
+    if (!particlesInstance) return;
+
+    const root = document.documentElement;
+    let particleOptions = {};
+    let auraColors = {};
+
+    console.log(`Updating background for stage: ${stage}`);
+
+    switch (stage) {
+        case 'step-emotion-analysis':
+            auraColors = { '--aura-color1': '#00d4ff', '--aura-color2': '#6366f1', '--aura-color3': '#0066ff' };
+            particleOptions = { links: { enable: true, opacity: 0.4 }, move: { speed: 1.5 } };
+            break;
+        case 'step-kg-result':
+        case 'step-iso-principle':
+            auraColors = { '--aura-color1': '#a78bfa', '--aura-color2': '#34d399', '--aura-color3': '#fbbf24' };
+            particleOptions = { links: { enable: true, opacity: 0.15 }, move: { speed: 0.8 } };
+            break;
+        case 'step-video-player':
+            auraColors = { '--aura-color1': '#a78bfa', '--aura-color2': '#fbbf24', '--aura-color3': '#f472b6' };
+            particleOptions = { links: { enable: false }, move: { speed: 0.3 } };
+            break;
+        case 'step-input':
+        default:
+            auraColors = { '--aura-color1': '#0066ff', '--aura-color2': '#8b5cf6', '--aura-color3': '#00d4ff' };
+            particleOptions = { links: { enable: false }, move: { speed: 0.5 } };
+            break;
+    }
+
+    // 应用颜色和粒子变化
+    for (const [key, value] of Object.entries(auraColors)) {
+        root.style.setProperty(key, value);
+    }
+    if (Object.keys(particleOptions).length > 0) {
+        particlesInstance.options.particles.load(particleOptions);
+        particlesInstance.refresh();
     }
 }
 // =================================================================
+
+// 3. 【新增】放在文件最底部的事件监听逻辑
+const videoPlayerForEvents = document.getElementById('healing-video');
+let epilogueTriggered = false; // 确保"尾声"只触发一次
+
+function startHealingEpilogue() {
+    if (epilogueTriggered) return;
+    epilogueTriggered = true;
+
+    const overlay = document.getElementById('healing-overlay');
+    const overlayText = overlay.querySelector('.breathing-text');
+    const videoPlayer = document.getElementById('healing-video'); // 重新获取以确保准确
+
+    // ★ 核心修改 1：在视觉淡出开始时，立即调用音量淡出函数
+    // 在4秒内将音量从当前值降到0
+    fadeAudio(videoPlayer, 0, 4000); 
+
+    // 视觉效果同步进行
+    videoPlayer.classList.add('fade-out');
+    overlayText.innerText = "让这份平静，缓缓融入您的呼吸。";
+    overlay.classList.remove('d-none');
+    setTimeout(() => overlay.classList.add('visible'), 100);
+
+    // "尾声"结束后，切换到最终选择卡片
+    setTimeout(() => {
+        // ★ 核心修改 2：在所有动画结束后，暂停视频以停止播放
+        videoPlayer.pause();
+        switchToStage('step-conclusion');
+        
+        // 重置所有状态... (这部分不变)
+        videoPlayer.classList.remove('fade-out');
+        videoPlayer.style.opacity = 1;
+        overlay.classList.remove('visible');
+        overlay.classList.add('d-none');
+        epilogueTriggered = false;
+    }, 5000); // "尾声"持续5秒
+}
+
+// 监听播放进度，在视频结束前4秒触发"尾声"
+videoPlayerForEvents.addEventListener('timeupdate', () => {
+    if (videoPlayerForEvents.duration && videoPlayerForEvents.currentTime > videoPlayerForEvents.duration - 4) {
+        startHealingEpilogue();
+    }
+});
+
+// 为防止意外，如果视频直接结束了也触发"尾声"
+videoPlayerForEvents.addEventListener('ended', startHealingEpilogue);
+
+// 每次加载新视频时，重置触发器
+videoPlayerForEvents.addEventListener('loadstart', () => {
+    epilogueTriggered = false;
+});
 
 // ======================== 最终版情绪解码动画系统 (13.5秒总时长) ========================
 function startFinalCognitiveForgeAnimation(kgData, container, titleEl, detailsEl) {
