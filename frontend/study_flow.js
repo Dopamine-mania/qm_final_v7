@@ -1,3 +1,76 @@
+// ======================== 语言资源中心 (i18n) ========================
+const langResources = {
+    zh: {
+        // 通用
+        analyzing: '分析中...',
+        startJourney: '开启疗愈之旅',
+        
+        // 情绪分析阶段 (AC)
+        stage_emotion_analysis: '情绪解码',
+        comfort_text: '别担心，你的所有感受，都值得被看见。',
+
+        // 知识图谱阶段 (KG)
+        stage_gems_mapping: 'GEMS 映射原理',
+        stage_kg_extraction: '知识图谱提取',
+        stage_prescription_generated: '疗愈处方已生成',
+        kg_summary_title: '疗愈焦点',
+
+        // ISO原理阶段
+        iso_step1_desc: "第一步：情绪匹配 (Matching)\nAI正应用同质原理，用与您情绪频率相似的音乐建立共鸣。",
+        iso_step2_desc: "第二步：同频引导 (Entrainment)\n在共鸣基础上，音乐将进行转化，温柔地引导您的情绪状态。",
+        iso_step3_desc: "ISO原理应用完成，即将为您呈现专属的疗愈音乐。",
+
+        // 视频播放阶段
+        video_main_title: "一段专属您的心灵之旅",
+        video_subtitle_prefix: "疗愈方案编号",
+        prelude_text: "请跟随光环... 深呼吸...",
+        epilogue_text: "让这份平静，缓缓融入您的呼吸。",
+
+        // 输入提示
+        input_alert: "请输入你的感受！"
+    },
+    en: {
+        // Common
+        analyzing: 'Analyzing...',
+        startJourney: 'Start Healing Journey',
+
+        // Emotion Analysis Stage (AC)
+        stage_emotion_analysis: 'Emotion Decoding',
+        comfort_text: 'Don\'t worry, all of your feelings are valid and deserve to be seen.',
+        
+        // Knowledge Graph Stage (KG)
+        stage_gems_mapping: 'GEMS Mapping Principle',
+        stage_kg_extraction: 'Knowledge Graph Extraction',
+        stage_prescription_generated: 'Healing Prescription Generated',
+        kg_summary_title: 'Healing Focus',
+
+        // ISO Principle Stage
+        iso_step1_desc: "Step 1: Matching\nThe AI is applying the ISO principle, using music with a similar frequency to your current emotion to build resonance.",
+        iso_step2_desc: "Step 2: Entrainment\nBased on resonance, the music will subtly transform, gently guiding your emotional state.",
+        iso_step3_desc: "ISO principle application complete. Preparing your exclusive healing music.",
+
+        // Video Player Stage
+        video_main_title: "A Mindful Journey, Just For You",
+        video_subtitle_prefix: "Healing Protocol ID",
+        prelude_text: "Please follow the halo... and breathe deeply...",
+        epilogue_text: "Let this peace slowly merge with your breath.",
+
+        // Input Alert
+        input_alert: "Please enter how you feel!",
+
+        // 后端返回文本映射
+        '疗愈处方已生成': 'Healing Prescription Generated',
+        '深度悲伤': 'Deep Sadness',
+        '我们感受到了您内心深处的悲伤...': 'We sensed a deep sadness within you...'
+    }
+};
+
+// "翻译官"函数：根据当前的语言设置，从资源中心获取文本
+function getText(key) {
+    const lang = document.documentElement.lang || 'zh'; // 获取当前语言
+    return langResources[lang][key] || key; // 如果找不到，就返回key本身
+}
+
 // ======================== 语言切换逻辑 ========================
 document.addEventListener('DOMContentLoaded', () => {
     let currentLang = 'zh'; // 默认语言为中文
@@ -140,12 +213,12 @@ let particlesInstance = null; // 粒子效果实例
 // 1. 【新增】放在文件顶部或全局区域的辅助函数
 function formatVideoTitle(filename) {
     const parts = filename.split('_'); // 例: "56_3min_09" -> ["56", "3min", "09"]
-    const mainTitle = "一段专属您的心灵之旅";
-    let subtitle = "疗愈方案";
+    const mainTitle = getText('video_main_title');
+    let subtitle = getText('video_subtitle_prefix');
 
     if (parts.length >= 2) {
         // 从文件名提取数字部分，组成编号
-        subtitle = `疗愈方案编号：EH-${parts[0]}-${parts[2] || '00'}`;
+        subtitle = `${subtitle}：EH-${parts[0]}-${parts[2] || '00'}`;
     }
     return { mainTitle, subtitle };
 }
@@ -200,13 +273,12 @@ const stages = {
 submitButton.addEventListener('click', async () => {
     const text = userInput.value;
     if (!text) { 
-        alert(document.documentElement.lang === 'zh' ? "请输入你的感受！" : "Please enter how you feel!");
+        alert(getText('input_alert'));
         return; 
     }
     
     submitButton.disabled = true;
-    const analyzingText = document.documentElement.lang === 'zh' ? '分析中...' : 'Analyzing...';
-    submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${analyzingText}`;
+    submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${getText('analyzing')}`;
     
     // 如果当前不是输入界面，先重置回输入界面
     if (currentStageId !== 'step-input') {
@@ -357,8 +429,8 @@ function handleState(data) {
 
             // --- 阶段三: 共情与抚慰 (在阶段二结束后开始) ---
             setTimeout(() => {
-                titleEl.innerText = data.result.analysisResult.title;
-                descriptionEl.innerText = data.result.analysisResult.description;
+                titleEl.innerText = getText(data.result.analysisResult.title);
+                descriptionEl.innerText = getText(data.result.analysisResult.description);
                 titleEl.style.animation = 'fadeIn 0.5s forwards';
                 descriptionEl.style.animation = 'fadeIn 0.5s 0.2s forwards';
                 
@@ -366,7 +438,7 @@ function handleState(data) {
                 const comfortText = document.createElement('p');
                 comfortText.id = 'comfort-text';
                 comfortText.className = 'healing-comfort-text';
-                comfortText.innerText = "别担心，你的所有感受，都值得被看见。";
+                comfortText.innerText = getText('comfort_text');
                 descriptionEl.parentNode.appendChild(comfortText);
                 comfortText.style.animation = 'fadeIn 1s 1s forwards';
 
@@ -398,7 +470,7 @@ function handleState(data) {
 
         // === 恢复原版动画：第一幕: GEMS 映射 (0.5秒后开始) ===
         setTimeout(() => {
-            titleEl.innerText = 'GEMS 映射原理';
+            titleEl.innerText = getText('stage_gems_mapping');
             container.innerHTML = ''; // 清空舞台
             // 注意：这里的路径需要匹配您真实API的数据结构
             const topEmotions = resultData.emotion_analysis?.top_emotions.slice(0, 5) || [];
@@ -416,7 +488,7 @@ function handleState(data) {
 
         // === 恢复原版动画：第二幕: 知识图谱节点 (4秒后开始) ===
         setTimeout(() => {
-            titleEl.innerText = '知识图谱提取';
+            titleEl.innerText = getText('stage_kg_extraction');
             container.innerHTML = ''; // 再次清空舞台
             container.classList.add('show-kg-background');
             const musicParams = resultData.music_parameters || {};
@@ -442,7 +514,7 @@ function handleState(data) {
 
         // === 恢复原版动画：第三幕: 最终疗愈处方 (10秒后出现) ===
         setTimeout(() => {
-            titleEl.innerText = '疗愈处方已生成';
+            titleEl.innerText = getText('stage_prescription_generated');
             container.innerHTML = ''; // 最终清空舞台
             container.classList.remove('show-kg-background');
             container.classList.add('forge-final-stage');
@@ -499,7 +571,7 @@ function handleState(data) {
         // --- 第一幕：情绪镜象 (0.5秒后开始, 持续4秒) ---
         setTimeout(() => {
             container.classList.add('iso-enter'); // 波形入场
-            description.innerText = "第一步：情绪匹配 (Matching)\nAI正应用同质原理，用与您情绪频率相似的音乐建立共鸣。";
+            description.innerText = getText('iso_step1_desc');
             description.classList.add('iso-text-visible');
 
             // 音乐波形开始同步为用户情绪波形
@@ -511,7 +583,7 @@ function handleState(data) {
             description.classList.remove('iso-text-visible'); // 旧文字淡出
 
             setTimeout(() => { // 等待旧文字淡出后，新文字再淡入
-                 description.innerText = "第二步：同频引导 (Entrainment)\n在共鸣基础上，音乐将进行转化，温柔地引导您的情绪状态。";
+                 description.innerText = getText('iso_step2_desc');
                  description.classList.add('iso-text-visible');
             }, 600);
            
@@ -527,7 +599,7 @@ function handleState(data) {
             description.classList.remove('iso-text-visible');
 
             setTimeout(() => {
-                description.innerText = "ISO原理应用完成，即将为您呈现专属的疗愈音乐。";
+                description.innerText = getText('iso_step3_desc');
                 description.classList.add('iso-text-visible');
             }, 600);
 
@@ -566,7 +638,7 @@ function handleState(data) {
         switchToStage('step-video-player');
 
         // --- 疗愈序章 ---
-        overlayText.innerText = "请跟随光环... 深呼吸...";
+        overlayText.innerText = getText('prelude_text');
         overlay.classList.remove('d-none');
         setTimeout(() => overlay.classList.add('visible'), 100);
 
@@ -649,9 +721,8 @@ restartButton.addEventListener('click', async () => {
     userInput.value = '';
     
     // 重置按钮状态
-    const startJourneyText = document.documentElement.lang === 'zh' ? '开启疗愈之旅' : 'Start Healing Journey';
     submitButton.disabled = false;
-    submitButton.innerHTML = `<i class="fas fa-heart-pulse me-2"></i> ${startJourneyText}`;
+    submitButton.innerHTML = `<i class="fas fa-heart-pulse me-2"></i> ${getText('startJourney')}`;
     
     // 停止任何进行中的轮询
     if (pollingIntervalId) {
@@ -788,7 +859,7 @@ function startHealingEpilogue() {
 
     // 视觉效果同步进行
     videoPlayer.classList.add('fade-out');
-    overlayText.innerText = "让这份平静，缓缓融入您的呼吸。";
+    overlayText.innerText = getText('epilogue_text');
     overlay.classList.remove('d-none');
     setTimeout(() => overlay.classList.add('visible'), 100);
 
