@@ -1,1017 +1,418 @@
-// ======================== 语言资源中心 (i18n) ========================
+// study_flow.js (V13 - 最终完整、稳定、未经删减版)
+
 const langResources = {
     zh: {
-        // 通用
-        analyzing: '分析中...',
-        startJourney: '开启疗愈之旅',
-        
-        // 情绪分析阶段 (AC)
-        stage_emotion_analysis: '情绪解码',
-        comfort_text: '别担心，你的所有感受，都值得被看见。',
-
-        // 知识图谱阶段 (KG)
-        stage_gems_mapping: 'GEMS 映射原理',
-        stage_kg_extraction: '知识图谱提取',
-        stage_prescription_generated: '疗愈处方已生成',
-        kg_summary_title: '疗愈焦点',
-
-        // ISO原理阶段
-        iso_step1_desc: "第一步：情绪匹配 (Matching)\nAI正应用同质原理，用与您情绪频率相似的音乐建立共鸣。",
-        iso_step2_desc: "第二步：同频引导 (Entrainment)\n在共鸣基础上，音乐将进行转化，温柔地引导您的情绪状态。",
-        iso_step3_desc: "ISO原理应用完成，即将为您呈现专属的疗愈音乐。",
-
-        // 视频播放阶段
-        video_main_title: "一段专属您的心灵之旅",
-        video_subtitle_prefix: "疗愈方案编号",
-        prelude_text: "请跟随光环... 深呼吸...",
-        epilogue_text: "让这份平静，缓缓融入您的呼吸。",
-
-        // 输入提示
-        input_alert: "请输入你的感受！"
+        analyzing: '分析中...', startJourney: '开启疗愈之旅', input_alert: "请输入你的感受！", unit_bpm: "BPM",
+        analysis_step1: "连接情绪神经网络...", analysis_step2: "解析27维情绪向量...", analysis_step3: "正在构建您的情绪图谱...",
+        stage_emotion_analysis: '情绪解码', comfort_text: '别担心，你的所有感受，都值得被看见。',
+        emotion_name_admiration: '钦佩', emotion_name_adoration: '崇拜', emotion_name_aesthetic_appreciation: '审美欣赏', emotion_name_amusement: '娱乐', emotion_name_anger: '愤怒', emotion_name_anxiety: '焦虑', emotion_name_awe: '敬畏', emotion_name_embarrassment: '尴尬', emotion_name_boredom: '无聊', emotion_name_calm: '平静', emotion_name_confusion: '困惑', emotion_name_contempt: '蔑视', emotion_name_desire: '渴望', emotion_name_disappointment: '失望', emotion_name_disgust: '厌恶', emotion_name_sympathy: '同情', emotion_name_entrancement: '入迷', emotion_name_jealousy: '嫉妒', emotion_name_excitement: '兴奋', emotion_name_fear: '恐惧', emotion_name_guilt: '内疚', emotion_name_horror: '恐怖', emotion_name_interest: '兴趣', emotion_name_joy: '快乐', emotion_name_nostalgia: '怀旧', emotion_name_romance: '浪漫', emotion_name_sadness: '悲伤', emotion_name_unknown: '复杂感受',
+        desc_admiration: '您的文字中充满了钦佩。欣赏他人的优点，也能激励我们自己变得更好。', desc_adoration: '我们感受到了崇拜的情感，这是一种强烈而积极的联结。', desc_aesthetic_appreciation: '您展现了对美的欣赏。感受美、欣赏美是生活中非常重要的疗愈力量。', desc_amusement: '您的文字中充满了娱乐和趣味，轻松的心情是最好的解压药。', desc_anger: '我们识别到了您心中的愤怒。愤怒是情绪的警报，提醒我们有些东西需要被关注和理解。', desc_anxiety: '我们察觉到了您当下的焦虑。请记得深呼吸，专注于此刻，一切都会过去。', desc_awe: '我们捕捉到了敬畏的情感。当面对宏大或壮丽时，敬畏之心油然而生。', desc_embarrassment: '您似乎感到有些尴尬。这是正常的社交情绪，帮助我们更好地融入群体。', desc_boredom: '我们察觉到了一丝无聊的情绪。也许这是一个信号，提示您去寻找新的挑战或兴趣。', desc_calm: '您的内心似乎处于一种平静的状态。愿您能享受这份宁静与和谐。', desc_confusion: '您的思绪似乎有些困惑。没关系，让我们一起在这片迷雾中寻找方向。', desc_contempt: '我们识别到了蔑视的情绪，它通常源于复杂的比较和判断。', desc_desire: '您的文字中充满了渴望。渴望是我们行动的动力，指引着我们去追求目标。', desc_disappointment: '我们感受到了您的失望。当现实未及预期，感到失望是人之常情。', desc_disgust: '我们感受到了您对某些事物的厌恶。这是一种强烈的信号，帮助我们建立边界。', desc_sympathy: '您的文字展现了很强的同情心。能够共情他人的感受，是一种宝贵的能力。', desc_entrancement: '您似乎正处于一种入迷的状态，专注是通往内心世界的一扇门。', desc_jealousy: '我们捕捉到了嫉妒的情绪。它常常指向我们内心深处所渴望的东西。', desc_excitement: '我们感受到了您内心的兴奋与激动，期待美好的事情发生总是令人愉悦。', desc_fear: '我们察觉到了您内心的恐惧。请记住，感到恐惧是正常的，重要的是我们如何面对它。', desc_guilt: '您似乎正被内疚感所困扰。内疚提醒我们关注自己的行为，并给予我们成长的机会。', desc_horror: '我们察觉到了恐怖的情绪。请确保您当前处于一个安全的环境中。', desc_interest: '我们看到了您对事物的兴趣，这是探索和学习的开始。', desc_joy: '我们捕捉到了您心中的喜悦之情！愿这份快乐如同阳光，照亮您的一天。', desc_nostalgia: '怀旧的情绪悄然浮现。过去的回忆，无论是甜是苦，都塑造了今天的我们。', desc_romance: '浪漫的情愫在您的文字中弥漫，这是一种深刻而美好的情感体验。', desc_sadness: '我们感受到了您内心的悲伤。请允许自己慢慢体会这份情绪，所有感受都值得被温柔以待。',
+        stage_gems_mapping: '情绪音乐 GEMS 映射', stage_kg_extraction: '知识图谱提取',
+        "prescription_title": "您的专属疗愈处方", "section_title_params": "音乐处方参数", "section_title_rationale": "疗愈机理阐述", "section_title_practice": "引导性聆听建议", "practice_text_default": "建议佩戴耳机，在一个安静的环境中完整聆听。尝试将注意力放在音乐的流动上，跟随旋律进行4秒吸气、6秒呼气的腹式呼吸。",
+        iso_title: "正在应用：同质原理", iso_step1_desc: "第一步：情绪匹配\nAI正应用同质原理，用与您情绪频率相似的音乐建立共鸣。", iso_step2_desc: "第二步：同频引导\n在共鸣基础上，音乐将进行转化，温柔地引导您的情绪状态。", iso_step3_desc: "ISO原理应用完成，即将为您呈现专属的疗愈音乐。",
+        video_main_title: "一段专属您的心灵之旅", video_subtitle_prefix: "疗愈方案编号", video_title_generic: "这段疗愈旅程，专属于你", video_title_fallback: "疗愈之声 (备用)", prelude_text: "请跟随光环... 深呼吸...", epilogue_text: "让这份平静，缓缓融入您的呼吸。",
+        "connection_lost": "与服务器的连接丢失，请刷新重试。", "protocol_activated_template": "{protocolName} 已激活",
+        "protocol_anxiety_relief_critical": "深度焦虑舒缓协议", "protocol_anger_release": "愤怒情绪疏导协议", "protocol_fear_soothing": "恐惧情绪安抚协议", "protocol_calm_maintenance": "深度平静维持协议", "protocol_sadness_support": "悲伤情感支持协议", "protocol_joy_energy": "快乐能量维持协议", "protocol_anxiety_relief_moderate": "中度焦虑缓解协议", "protocol_positive_excitement": "积极能量激活协议", "protocol_nostalgia_comfort": "怀旧情感抚慰协议", "protocol_interest_sparking": "内在兴趣激发协议", "protocol_default": "基础情绪平衡协议",
+        "value_major": "大调", "value_minor": "小调", "value_neutral": "中性", "value_loud": "强", "value_soft": "弱", "value_medium": "中等", "value_consonant": "协和", "value_dissonant": "不协和", "value_mixed": "混合", "value_high": "高音域", "value_low": "低音域", "value_dense": "密集", "value_sparse": "稀疏",
+        "value_warm_pad": "温暖铺底", "value_expressive_strings": "表现力弦乐", "value_soft_choir": "轻柔合唱", "value_nature_sounds": "自然之声", "value_gentle_piano": "柔和钢琴", "value_bright_ensemble": "明亮合奏", "value_ambient_pad": "氛围铺底", "value_energetic_mix": "活力律动", "value_vintage_warmth": "复古温暖", "value_interesting_textures": "趣味织体", "value_neutral_pad": "中性铺底",
+        "approach_integration": "采用中性、平衡的音乐促进情绪整合与自我觉察。", "approach_anxiety_relief": "采用缓慢、协和的音乐逐步降低生理激活水平，营造安全感。", "approach_anger_release": "先用匹配情绪能量的音乐建立连接，再逐步引导到更平静的状态。", "approach_sadness_support": "从共情音乐开始，逐步引入温暖、上升的音乐元素，给予希望感。", "approach_positive_maintenance": "维持积极状态，同时通过稳定的节奏和结构避免过度兴奋。"
     },
     en: {
-        // Common
-        analyzing: 'Analyzing...',
-        startJourney: 'Start Healing Journey',
-
-        // Emotion Analysis Stage (AC)
-        stage_emotion_analysis: 'Emotion Decoding',
-        comfort_text: 'Don\'t worry, all of your feelings are valid and deserve to be seen.',
-        
-        // Knowledge Graph Stage (KG)
-        stage_gems_mapping: 'GEMS Mapping Principle',
-        stage_kg_extraction: 'Knowledge Graph Extraction',
-        stage_prescription_generated: 'Healing Prescription Generated',
-        kg_summary_title: 'Healing Focus',
-
-        // ISO Principle Stage
-        iso_step1_desc: "Step 1: Matching\nThe AI is applying the ISO principle, using music with a similar frequency to your current emotion to build resonance.",
-        iso_step2_desc: "Step 2: Entrainment\nBased on resonance, the music will subtly transform, gently guiding your emotional state.",
-        iso_step3_desc: "ISO principle application complete. Preparing your exclusive healing music.",
-
-        // Video Player Stage
-        video_main_title: "A Mindful Journey, Just For You",
-        video_subtitle_prefix: "Healing Protocol ID",
-        prelude_text: "Please follow the halo... and breathe deeply...",
-        epilogue_text: "Let this peace slowly merge with your breath.",
-
-        // Input Alert
-        input_alert: "Please enter how you feel!",
-
-        // 后端返回文本映射
-        '疗愈处方已生成': 'Healing Prescription Generated',
-        '深度悲伤': 'Deep Sadness',
-        '我们感受到了您内心深处的悲伤...': 'We sensed a deep sadness within you...'
+        analyzing: 'Analyzing...', startJourney: 'Start Healing Journey', input_alert: "Please enter how you feel!", unit_bpm: "BPM",
+        analysis_step1: "Connecting to emotional neural network...", analysis_step2: "Parsing 27-dimensional emotion vectors...", analysis_step3: "Constructing your emotional profile...",
+        stage_emotion_analysis: 'Emotion Decoding', comfort_text: 'Don\'t worry, all of your feelings are valid and deserve to be seen.',
+        emotion_name_admiration: 'Admiration', emotion_name_adoration: 'Adoration', emotion_name_aesthetic_appreciation: 'Aesthetic Appreciation', emotion_name_amusement: 'Amusement', emotion_name_anger: 'Anger', emotion_name_anxiety: 'Anxiety', emotion_name_awe: 'Awe', emotion_name_embarrassment: 'Embarrassment', emotion_name_boredom: 'Boredom', emotion_name_calm: 'Calm', emotion_name_confusion: 'Confusion', emotion_name_contempt: 'Contempt', emotion_name_desire: 'Desire', emotion_name_disappointment: 'Disappointment', emotion_name_disgust: 'Disgust', emotion_name_sympathy: 'Sympathy', emotion_name_entrancement: 'Entrancement', emotion_name_jealousy: 'Jealousy', emotion_name_excitement: 'Excitement', emotion_name_fear: 'Fear', emotion_name_guilt: 'Guilt', emotion_name_horror: 'Horror', emotion_name_interest: 'Interest', emotion_name_joy: 'Joy', emotion_name_nostalgia: 'Nostalgia', emotion_name_romance: 'Romance', emotion_name_sadness: 'Sadness', emotion_name_unknown: 'Complex Feelings',
+        desc_admiration: 'Your words are filled with admiration. Appreciating the strengths of others can also inspire us to become better.', desc_adoration: 'We sense a feeling of adoration, which is a strong and positive connection.', desc_aesthetic_appreciation: 'You demonstrate an appreciation for beauty. Feeling and appreciating beauty is a vital healing force in life.', desc_amusement: 'Your words are full of amusement and fun; a lighthearted mood is the best medicine for stress.', desc_anger: 'We recognize the anger within you. Anger is an emotional alarm, alerting us that something needs attention and understanding.', desc_anxiety: 'We have detected your current anxiety. Remember to take a deep breath, focus on the present moment, and know that this too shall pass.', desc_awe: 'We\'ve captured a sense of awe. When faced with the vast or magnificent, a feeling of awe naturally arises.', desc_embarrassment: 'You seem to be feeling some embarrassment. This is a normal social emotion that helps us better integrate into groups.', desc_boredom: 'We\'ve detected a hint of boredom. Perhaps this is a signal prompting you to find new challenges or interests.', desc_calm: 'Your inner world appears to be in a state of calm. May you enjoy this tranquility and harmony.', desc_confusion: 'Your thoughts seem a bit confused. It\'s okay; let\'s find a way through this fog together.', desc_contempt: 'We recognize the emotion of contempt, which often stems from complex comparisons and judgments.', desc_desire: 'Your words are filled with desire. Desire is our motivation to act, guiding us toward our goals.', desc_disappointment: 'We sense your disappointment. It\'s natural to feel this way when reality doesn\'t meet expectations.', desc_disgust: 'We sense your aversion to something. This is a strong signal that helps us establish our boundaries.', desc_sympathy: 'Your words show great sympathy. The ability to empathize with others\' feelings is a precious quality.', desc_entrancement: 'You seem to be in a state of entrancement; focus is a gateway to the inner world.', desc_jealousy: 'We\'ve captured the emotion of jealousy. It often points to what we deeply desire in our hearts.', desc_excitement: 'We sense the excitement and thrill within you; anticipating good things is always a pleasure.', desc_fear: 'We have detected a sense of fear. Please remember, feeling fear is normal; what matters is how we face it.', desc_guilt: 'You seem to be troubled by guilt. Guilt reminds us to pay attention to our actions and gives us an opportunity to grow.', desc_horror: 'We have detected an emotion of horror. Please ensure that you are currently in a safe environment.', desc_interest: 'We see your interest in things, which is the beginning of exploration and learning.', desc_joy: 'We\'ve captured the joy in your heart! May this happiness shine like the sun and brighten your day.', desc_nostalgia: 'A feeling of nostalgia has gently surfaced. Memories of the past, whether sweet or bitter, have shaped who we are today.', desc_romance: 'A sense of romance permeates your words; it is a profound and beautiful emotional experience.', desc_sadness: 'We sense the sadness within you. Please allow yourself to gently experience this emotion; all feelings deserve to be treated with tenderness.',
+        stage_gems_mapping: 'Emotion-Music GEMS Mapping', stage_kg_extraction: 'Knowledge Graph Extraction',
+        "prescription_title": "Your Personal Healing Prescription", "section_title_params": "Musical Prescription Parameters", "section_title_rationale": "Therapeutic Rationale", "section_title_practice": "Guided Listening Practice", "practice_text_default": "It is recommended to use headphones and listen in a quiet environment. Try to focus on the flow of the music, and practice diaphragmatic breathing with a 4-second inhale and 6-second exhale.",
+        iso_title: "Applying: ISO Principle", iso_step1_desc: "Step 1: Matching\nThe AI is applying the ISO principle...", iso_step2_desc: "Step 2: Entrainment\nBased on resonance, the music will subtly transform...", iso_step3_desc: "ISO principle application complete. Preparing your music...",
+        video_main_title: "A Mindful Journey, Just For You", video_subtitle_prefix: "Healing Protocol ID", video_title_generic: "This Healing Journey, Is Just For You", video_title_fallback: "Sound of Healing (Fallback)", prelude_text: "Please follow the halo... and breathe deeply...", epilogue_text: "Let this peace slowly merge with your breath.",
+        "connection_lost": "Connection to the server was lost. Please refresh and try again.", "protocol_activated_template": "{protocolName} Activated",
+        "protocol_anxiety_relief_critical": "Deep Anxiety Relief Protocol", "protocol_anger_release": "Anger Release Protocol", "protocol_fear_soothing": "Fear Soothing Protocol", "protocol_calm_maintenance": "Deep Calm Maintenance Protocol", "protocol_sadness_support": "Sadness Support Protocol", "protocol_joy_energy": "Joyful Energy Protocol", "protocol_anxiety_relief_moderate": "Moderate Anxiety Relief Protocol", "protocol_positive_excitement": "Positive Excitement Protocol", "protocol_nostalgia_comfort": "Nostalgia Comfort Protocol", "protocol_interest_sparking": "Interest Sparking Protocol", "protocol_default": "Basic Emotional Balance Protocol",
+        "value_major": "Major", "value_minor": "Minor", "value_neutral": "Neutral", "value_loud": "Loud", "value_soft": "Soft", "value_medium": "Medium", "value_consonant": "Consonant", "value_dissonant": "Dissonant", "value_mixed": "Mixed", "value_high": "High", "value_low": "Low", "value_dense": "Dense", "value_sparse": "Sparse",
+        "value_warm_pad": "Warm Pad", "value_expressive_strings": "Expressive Strings", "value_soft_choir": "Soft Choir", "value_nature_sounds": "Nature Sounds", "value_gentle_piano": "Gentle Piano", "value_bright_ensemble": "Bright Ensemble", "value_ambient_pad": "Ambient Pad", "value_energetic_mix": "Energetic Mix", "value_vintage_warmth": "Vintage Warmth", "value_interesting_textures": "Interesting Textures", "value_neutral_pad": "Neutral Pad",
+        "approach_integration": "Utilizing neutral, balanced music to promote emotional integration and self-awareness.", "approach_anxiety_relief": "Employing slow, consonant music to gradually reduce physiological arousal and create a sense of safety.", "approach_anger_release": "Initiating with music that matches the emotional energy to establish a connection, then gradually guiding towards a calmer state.", "approach_sadness_support": "Starting with empathetic music and progressively introducing warm, ascending musical elements to instill a sense of hope.", "approach_positive_maintenance": "Maintaining a positive state while avoiding over-stimulation through stable rhythms and structure."
     }
 };
 
-// "翻译官"函数：根据当前的语言设置，从资源中心获取文本
 function getText(key) {
-    const lang = document.documentElement.lang || 'zh'; // 获取当前语言
-    return langResources[lang][key] || key; // 如果找不到，就返回key本身
+    const lang = 'en'; // 强制使用英文
+    const resource = langResources[lang];
+    return resource[key] || key;
 }
 
-// ======================== 语言切换逻辑 ========================
 document.addEventListener('DOMContentLoaded', () => {
-    let currentLang = 'zh'; // 默认语言为中文
+    // 默认语言设为英文，并让按钮逻辑保持完整，以备将来恢复
+    let currentLang = 'en'; 
     const langSwitcher = document.getElementById('language-switcher');
     
-    // 如果找不到切换按钮，就直接返回，避免报错
-    if (!langSwitcher) return;
-
     function setLanguage(lang) {
-        document.documentElement.lang = lang; // 设置页面语言属性
+        document.documentElement.lang = lang; 
         currentLang = lang;
-        
-        // 遍历所有带 data-lang- 属性的元素
         document.querySelectorAll('[data-lang-zh], [data-lang-en]').forEach(el => {
             const text = el.getAttribute(`data-lang-${lang}`);
-            if (text) {
-                el.innerText = text;
-            }
+            if (text) el.innerText = text;
         });
-        
-        // 特殊处理 placeholder
         document.querySelectorAll('[data-lang-zh-placeholder], [data-lang-en-placeholder]').forEach(el => {
             const placeholder = el.getAttribute(`data-lang-${lang}-placeholder`);
-            if (placeholder) {
-                el.placeholder = placeholder;
-            }
+            if (placeholder) el.placeholder = placeholder;
         });
-        
-        // 更新切换按钮的文本
-        const switcherSpan = langSwitcher.querySelector('span');
-        if (switcherSpan) {
-            switcherSpan.innerText = lang === 'zh' ? 'English' : '中文';
+        if(langSwitcher){
+            const switcherSpan = langSwitcher.querySelector('span');
+            if (switcherSpan) { switcherSpan.innerText = lang === 'zh' ? 'English' : '中文'; }
         }
     }
 
-    langSwitcher.addEventListener('click', (e) => {
-        e.preventDefault(); // 阻止链接默认行为
-        const newLang = currentLang === 'zh' ? 'en' : 'zh';
-        setLanguage(newLang);
-    });
+    if (langSwitcher) {
+        langSwitcher.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            const newLang = currentLang === 'zh' ? 'en' : 'zh';
+            setLanguage(newLang);
+        });
+    }
 
-    // 初始化页面语言
-    setLanguage(currentLang);
+    setLanguage(currentLang); // 初始化为英文
 });
 
-// ======================== 重新开始功能 ========================
+let sessionId = null, pollingIntervalId = null, currentStageId = 'step-input', particlesInstance = null;
+const submitButton = document.getElementById('submit-button'), userInput = document.getElementById('user-input'), restartButton = document.getElementById('restart-button'), endSessionButton = document.getElementById('end-session-button'), healingVideo = document.getElementById('healing-video');
+const stages = { 'step-input': document.getElementById('step-input'), 'step-emotion-analysis': document.getElementById('step-emotion-analysis'), 'step-kg-result': document.getElementById('step-kg-result'), 'step-iso-principle': document.getElementById('step-iso-principle'), 'step-synthesis': document.getElementById('step-synthesis'), 'step-video-player': document.getElementById('step-video-player'), 'step-conclusion': document.getElementById('step-conclusion') };
 
-
-// ======================== 模拟后端API (严格遵守合同V1.2) ========================
-const mockApi = {
-    _mockDatabase: {}, // 模拟后端的 tasks_status
-
-    create_session: async function(text) {
-        console.log("【模拟后端】收到请求，文本:", text);
-        await new Promise(resolve => setTimeout(resolve, 500)); // 模拟网络延迟
-        const sessionId = "mock-session-" + Date.now();
-        this._mockDatabase[sessionId] = { step: 0 }; // 初始化任务步骤
-        console.log("【模拟后端】创建任务成功，Session ID:", sessionId);
-        return { sessionId: sessionId };
-    },
-
-    session_status: async function(sessionId) {
-        console.log("【模拟后端】查询状态，Session ID:", sessionId);
-        if (!this._mockDatabase[sessionId]) return { status: 'ERROR', message: 'Session not found' };
-
-        const currentState = this._mockDatabase[sessionId];
-        currentState.step++;
-
-        let response = {};
-        switch (currentState.step) {
-            case 1:
-                response = {
-                    status: 'AC_COMPLETE',
-                    result: { 
-                        analysisResult: { 
-                            title: "深度悲伤", 
-                            description: "我们感受到了您内心深处的悲伤，它似乎还交织着对过往的思念...",
-                            topEmotions: [
-                                {"name": "悲伤", "score": 0.85},
-                                {"name": "思念", "score": 0.60},
-                                {"name": "疲倦", "score": 0.40},
-                                {"name": "平静", "score": 0.30},
-                                {"name": "孤独", "score": 0.25},
-                                {"name": "失落", "score": 0.20},
-                                {"name": "无助", "score": 0.15}
-                            ]
-                        } 
-                    }
-                };
-                break;
-            case 2:
-                response = {
-                    status: 'KG_COMPLETE',
-                    result: { 
-                        analysisResult: { title: "深度悲伤", description: "系统捕捉到您内心的孤独与失落感，正在为您寻找共鸣与慰藉。" },
-                        kgResult: { title: "疗愈处方已生成", details: ["音乐主题: 希望与慰藉", "建议节奏: 60-80 BPM (慢板)", "调式: C大调 (温暖、稳定)"] } 
-                    }
-                };
-                break;
-            case 3:
-                 response = {
-                    status: 'ISO_PRINCIPLE_READY',
-                    result: { 
-                        analysisResult: { /* (数据省略以保持简洁) */ }, 
-                        kgResult: { /* (数据省略) */ },
-                        isoPrinciple: { title: "正在应用：同质原理 (ISO Principle)", description: "“同质原理”是音乐治疗的核心理念之一，意指用与您当前情绪状态相似的音乐来引导共鸣，从而达到宣泄、接受并最终转化的疗愈效果。" }
-                    }
-                 };
-                 break;
-            case 4:
-                response = {
-                    status: 'VIDEO_READY',
-                    result: { 
-                        analysisResult: { /* (数据省略) */ }, 
-                        kgResult: { /* (数据省略) */ }, 
-                        isoPrinciple: { /* (数据省略) */ },
-                        video: { url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm', title: '《雨后的海岸线》' }
-                    }
-                };
-                break;
-            default:
-                response = { status: 'PENDING', result: {} };
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 1500)); // 模拟每次查询需要1.5秒
-        console.log("【模拟后端】返回状态:", response);
-        return response;
-    }
-};
-// ========================================================================
-
-
-// ======================== 全新！前端核心逻辑 V2 (切换版) ========================
-let sessionId = null;
-let pollingIntervalId = null;
-let currentStageId = 'step-input'; // 记录当前显示的舞台ID
-let emotionChart = null; // 情绪雷达图实例
-let particlesInstance = null; // 粒子效果实例
-
-// 1. 【新增】放在文件顶部或全局区域的辅助函数
-function formatVideoTitle(filename) {
-    const parts = filename.split('_'); // 例: "56_3min_09" -> ["56", "3min", "09"]
-    const mainTitle = getText('video_main_title');
+function formatVideoTitle(displayNameKey, fileName) {
+    const mainTitleEl = document.getElementById('video-main-title');
+    const subtitleEl = document.getElementById('video-subtitle');
+    mainTitleEl.innerText = getText(displayNameKey);
+    const parts = fileName.split('_'); 
     let subtitle = getText('video_subtitle_prefix');
-
-    if (parts.length >= 2) {
-        // 从文件名提取数字部分，组成编号
-        subtitle = `${subtitle}：EH-${parts[0]}-${parts[2] || '00'}`;
-    }
-    return { mainTitle, subtitle };
+    if (parts.length >= 2) { subtitle = `${subtitle}: EH-${parts[0]}-${parts[2] || '00'}`; }
+    subtitleEl.innerText = subtitle;
 }
 
-// 【新增】一个可复用的、用于平滑处理音量淡入淡出的函数
 function fadeAudio(videoElement, endVolume, duration) {
     const startVolume = videoElement.volume;
-    const intervalTime = 50; // 每50毫秒调整一次音量
+    const intervalTime = 50;
     const stepCount = duration / intervalTime;
     const volumeStep = (endVolume - startVolume) / stepCount;
-
-    // 如果音量已经达到目标值，则不执行
     if (startVolume === endVolume) return;
-
-    const fade = setInterval(() => {
+    if (videoElement.fadeInterval) { clearInterval(videoElement.fadeInterval); }
+    videoElement.fadeInterval = setInterval(() => {
+        if (!videoElement) { clearInterval(videoElement.fadeInterval); return; }
         let newVolume = videoElement.volume + volumeStep;
-
-        // 确保音量不会超出 0.0 - 1.0 的范围
-        if (volumeStep > 0) { // Fade in
-            if (newVolume >= endVolume) {
-                newVolume = endVolume;
-                clearInterval(fade);
-            }
-        } else { // Fade out
-            if (newVolume <= endVolume) {
-                newVolume = endVolume;
-                clearInterval(fade);
-            }
+        if ((volumeStep > 0 && newVolume >= endVolume) || (volumeStep < 0 && newVolume <= endVolume)) {
+            newVolume = endVolume;
+            clearInterval(videoElement.fadeInterval);
+            videoElement.fadeInterval = null; 
         }
-        
         videoElement.volume = newVolume;
-
     }, intervalTime);
 }
 
-// DOM元素获取
-const submitButton = document.getElementById('submit-button');
-const userInput = document.getElementById('user-input');
-const restartButton = document.getElementById('restart-button');
-
-// 将所有舞台卡片存入一个对象，方便管理
-const stages = {
-    'step-input': document.getElementById('step-input'),
-    'step-emotion-analysis': document.getElementById('step-emotion-analysis'),
-    'step-kg-result': document.getElementById('step-kg-result'),
-    'step-iso-principle': document.getElementById('step-iso-principle'),
-    'step-video-player': document.getElementById('step-video-player'),
-    'step-conclusion': document.getElementById('step-conclusion'), // 新增这一行
-};
-
-// 主提交函数
 submitButton.addEventListener('click', async () => {
     const text = userInput.value;
-    if (!text) { 
-        alert(getText('input_alert'));
-        return; 
-    }
-    
+    if (!text) { alert(getText('input_alert')); return; }
     submitButton.disabled = true;
     submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${getText('analyzing')}`;
-    
-    // 如果当前不是输入界面，先重置回输入界面
-    if (currentStageId !== 'step-input') {
-        await resetUI();
+    if (currentStageId !== 'step-input') { await resetUI(); }
+    try {
+        const createResponse = await fetch('http://127.0.0.1:5001/api/create_session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: text }) });
+        if (!createResponse.ok) throw new Error(`HTTP error! status: ${createResponse.status}`);
+        const createData = await createResponse.json();
+        sessionId = createData.sessionId;
+        if (sessionId) { startPolling(); } else { throw new Error('Session ID not received.'); }
+    } catch (error) {
+        console.error("Error creating session:", error);
+        alert(getText('connection_lost'));
+        submitButton.disabled = false;
+        submitButton.innerHTML = `<i class="fas fa-heart-pulse me-2"></i> ${getText('startJourney')}`;
     }
-    
-    // 替换第一处
-    const createResponse = await fetch('http://127.0.0.1:5001/api/create_session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-    });
-    const createData = await createResponse.json();
-    
-    sessionId = createData.sessionId;
-    if (sessionId) startPolling();
 });
 
-// 轮询函数
 function startPolling() {
     if (pollingIntervalId) clearInterval(pollingIntervalId);
     pollingIntervalId = setInterval(async () => {
-        
-        // 替换第二处
-        const statusResponse = await fetch(`http://127.0.0.1:5001/api/session_status?id=${sessionId}`);
-        const statusData = await statusResponse.json();
-        
-        handleState(statusData);
-    }, 2000); // 每2秒查询一次
+        if (!sessionId) { clearInterval(pollingIntervalId); return; }
+        try {
+            const statusResponse = await fetch(`http://127.0.0.1:5001/api/session_status?id=${sessionId}`);
+            if (!statusResponse.ok) throw new Error(`Polling failed! status: ${statusResponse.status}`);
+            const statusData = await statusResponse.json();
+            if (statusData.status === 'ERROR') throw new Error(`Server error: ${statusData.error_message}`);
+            handleState(statusData);
+        } catch(error) {
+            console.error("Polling failed:", error);
+            clearInterval(pollingIntervalId);
+            alert(getText('connection_lost'));
+            submitButton.disabled = false;
+            submitButton.innerHTML = `<i class="fas fa-heart-pulse me-2"></i> ${getText('startJourney')}`;
+        }
+    }, 2000); 
 }
 
-// 状态处理器 (升级版)
 function handleState(data) {
     if (data.status === 'AC_COMPLETE') {
-        clearInterval(pollingIntervalId); // 暂停轮询
-
-        const container = document.getElementById('emotion-core-container');
-        const titleEl = document.getElementById('emotion-title');
-        const descriptionEl = document.getElementById('emotion-description');
-
-        // 准备工作：清空旧内容并切换舞台
-        container.innerHTML = '';
-        titleEl.innerText = '';
-        descriptionEl.innerText = '';
-        // 移除可能存在的旧抚慰文字
-        const oldComfortText = document.getElementById('comfort-text');
-        if(oldComfortText) oldComfortText.remove();
-
+        clearInterval(pollingIntervalId);
         switchToStage('step-emotion-analysis');
-
-        // ================== 全新三阶段情绪解码动画 ==================
-        
-        // --- 阶段一: AI分析启动 (持续约 3.5 秒) ---
+        const container = document.getElementById('emotion-core-container'), titleEl = document.getElementById('emotion-title'), descriptionEl = document.getElementById('emotion-description');
+        container.innerHTML = ''; titleEl.innerText = ''; descriptionEl.innerText = '';
+        const oldComfortText = document.getElementById('comfort-text');
+        if (oldComfortText) oldComfortText.remove();
         const analyzerContainer = document.createElement('div');
         analyzerContainer.className = 'analyzer-text-container';
         container.appendChild(analyzerContainer);
-
-        const analysisSteps = [
-            "连接情绪神经网络...",
-            "解析27维情绪向量...",
-            "正在构建您的情绪图谱..."
-        ];
+        const analysisSteps = [getText('analysis_step1'), getText('analysis_step2'), getText('analysis_step3')];
         let stepIndex = 0;
         analyzerContainer.innerHTML = `<span class="analyzer-text">${analysisSteps[stepIndex]}</span>`;
         const typingInterval = setInterval(() => {
             stepIndex++;
-            if (stepIndex < analysisSteps.length) {
-                analyzerContainer.innerHTML = `<span class="analyzer-text">${analysisSteps[stepIndex]}</span>`;
-            } else {
-                clearInterval(typingInterval);
-            }
+            if (stepIndex < analysisSteps.length) { analyzerContainer.innerHTML = `<span class="analyzer-text">${analysisSteps[stepIndex]}</span>`; } 
+            else { clearInterval(typingInterval); }
         }, 1200);
-
-
-        // --- 阶段二: 情绪图谱构建 (在阶段一结束后开始) ---
         setTimeout(() => {
-            // 清理阶段一内容，准备渲染图谱
             container.innerHTML = '';
-
-            const SWEEP_DURATION = 3000; // 雷达扫描一圈3秒
-
-            // 渲染雷达背景和扫描指针
-            const radarGrid = document.createElement('div');
-            radarGrid.className = 'radar-grid';
-            container.appendChild(radarGrid);
-
-            const radarSweep = document.createElement('div');
-            radarSweep.className = 'radar-sweep';
-            radarSweep.style.animation = `radar-sweep-anim ${SWEEP_DURATION}ms linear 1`;
-            container.appendChild(radarSweep);
-
-            // 渲染情绪核心
-            const core = document.createElement('div');
-            core.className = 'emotion-core';
-            container.appendChild(core);
-
-            // 准备渲染情绪卫星
+            const SWEEP_DURATION = 3000;
+            const radarGrid = document.createElement('div'); radarGrid.className = 'radar-grid'; container.appendChild(radarGrid);
+            const radarSweep = document.createElement('div'); radarSweep.className = 'radar-sweep'; radarSweep.style.animation = `radar-sweep-anim ${SWEEP_DURATION}ms linear 1`; container.appendChild(radarSweep);
+            const core = document.createElement('div'); core.className = 'emotion-core'; container.appendChild(core);
             const emotions = data.result.analysisResult.topEmotions;
-            const MIN_RADIUS = 30;  // 最近半径
-            const MAX_RADIUS = 115; // 最远半径
-
-            emotions.slice(1).forEach((emo, index) => {
-                const score = emo.score || 0;
-                
-                // ★ 核心改进: 半径由情绪分数决定
-                const finalRadius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * score;
-                
-                const angleRad = (index / (emotions.length - 1)) * 2 * Math.PI - (Math.PI / 2);
-                const angleDeg = (angleRad * 180 / Math.PI) + 90;
-                
-                const x = Math.cos(angleRad) * finalRadius;
-                const y = Math.sin(angleRad) * finalRadius;
-                const size = 5 + score * 10; // 大小也稍微和分数关联
-
-                // 创建能量束
-                const tracer = document.createElement('div');
-                tracer.className = 'tracer-line';
-                tracer.style.height = `${finalRadius}px`;
-                tracer.style.transform = `rotate(${angleDeg - 90}deg)`;
-
-                // 计算出现延迟
-                const appearDelay = (angleDeg / 360) * SWEEP_DURATION;
+            const MIN_RADIUS = 30; const MAX_RADIUS = 115;
+            const secondaryEmotions = emotions.slice(1).filter(emo => emo.score > 0.01);
+            secondaryEmotions.forEach((emo, index) => {
+                const score = emo.score || 0, finalRadius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * score, angleRad = (index / secondaryEmotions.length) * 2 * Math.PI - (Math.PI / 2), angleDeg = (angleRad * 180 / Math.PI), x = Math.cos(angleRad) * finalRadius, y = Math.sin(angleRad) * finalRadius, size = 5 + score * 10;
+                const tracer = document.createElement('div'); tracer.className = 'tracer-line'; tracer.style.height = `${finalRadius}px`; tracer.style.transform = `rotate(${angleDeg}deg)`;
+                const appearDelay = (angleDeg + 90) / 360 * SWEEP_DURATION;
                 tracer.style.animation = `flash-tracer 0.6s ease-out ${appearDelay}ms forwards`;
-                
-                // 创建卫星容器
-                const satelliteContainer = document.createElement('div');
-                satelliteContainer.className = 'emotion-satellite-container';
-                satelliteContainer.style.left = `calc(50% + ${x}px)`;
-                satelliteContainer.style.top = `calc(50% + ${y}px)`;
-                
-                const satellite = document.createElement('div');
-                satellite.className = 'emotion-satellite';
-                satellite.style.width = `${size}px`;
-                satellite.style.height = `${size}px`;
-                satellite.style.animation = `popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${appearDelay + 100}ms forwards`;
-                
-                // ★ 核心改进: 标签显示百分比
-                const label = document.createElement('span');
-                label.className = 'satellite-label';
-                label.innerText = `${emo.name} ${Math.round(score * 100)}%`;
-                label.style.animation = `fadeInLabel 0.5s ease-out ${appearDelay + 300}ms forwards`;
-
-                container.appendChild(tracer);
-                satelliteContainer.appendChild(satellite);
-                satelliteContainer.appendChild(label);
-                container.appendChild(satelliteContainer);
+                const satelliteContainer = document.createElement('div'); satelliteContainer.className = 'emotion-satellite-container'; satelliteContainer.style.left = `calc(50% + ${x}px)`; satelliteContainer.style.top = `calc(50% + ${y}px)`;
+                const satellite = document.createElement('div'); satellite.className = 'emotion-satellite'; satellite.style.width = `${size}px`; satellite.style.height = `${size}px`; satellite.style.animation = `popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${appearDelay + 100}ms forwards`;
+                const label = document.createElement('span'); label.className = 'satellite-label'; label.innerText = `${getText(emo.nameKey)} ${Math.round(score * 100)}%`; label.style.animation = `fadeInLabel 0.5s ease-out ${appearDelay + 300}ms forwards`;
+                container.appendChild(tracer); satelliteContainer.appendChild(satellite); satelliteContainer.appendChild(label); container.appendChild(satelliteContainer);
             });
-
-            // --- 阶段三: 共情与抚慰 (在阶段二结束后开始) ---
             setTimeout(() => {
-                titleEl.innerText = getText(data.result.analysisResult.title);
-                descriptionEl.innerText = getText(data.result.analysisResult.description);
-                titleEl.style.animation = 'fadeIn 0.5s forwards';
-                descriptionEl.style.animation = 'fadeIn 0.5s 0.2s forwards';
-                
-                // ★ 新增元素: 抚慰金句
-                const comfortText = document.createElement('p');
-                comfortText.id = 'comfort-text';
-                comfortText.className = 'healing-comfort-text';
-                comfortText.innerText = getText('comfort_text');
+                const analysisResult = data.result.analysisResult;
+                const mainEmotionKey = analysisResult.titleKey;
+                titleEl.innerText = getText(mainEmotionKey);
+                const descriptionKey = `desc_${mainEmotionKey.replace('emotion_name_', '')}`;
+                descriptionEl.innerText = getText(descriptionKey) || '';
+                titleEl.style.animation = 'fadeIn 0.5s forwards'; descriptionEl.style.animation = 'fadeIn 0.5s 0.2s forwards';
+                const comfortText = document.createElement('p'); comfortText.id = 'comfort-text'; comfortText.className = 'healing-comfort-text'; comfortText.innerText = getText('comfort_text');
                 descriptionEl.parentNode.appendChild(comfortText);
                 comfortText.style.animation = 'fadeIn 1s 1s forwards';
-
             }, SWEEP_DURATION + 500);
-
-            // 等待所有动画播放完毕后，继续轮询
-            setTimeout(startPolling, SWEEP_DURATION + 5000);
-
-        }, 3500); // 阶段一总时长
-
-    } 
-    else if (data.status === 'KG_COMPLETE') {
+            setTimeout(startPolling, 4000);
+        }, 3500);
+    } else if (data.status === 'KG_COMPLETE') {
         clearInterval(pollingIntervalId);
-
-        const el = stages['step-kg-result'];
-        const titleEl = el.querySelector('#kg-title');
-        const container = el.querySelector('#cognitive-forge-container');
-        const detailsEl = el.querySelector('#kg-details');
-
-        container.innerHTML = '';
-        detailsEl.innerHTML = '';
-        titleEl.innerText = '';
-        // 确保移除可能存在的旧样式类
-        container.className = 'cognitive-forge-container';
-
-        // 获取分析结果数据 (注意：根据您的模拟API，数据结构路径可能是 result.kgResult)
-        const resultData = data.result.kgResult;
         switchToStage('step-kg-result');
-
-        // === 恢复原版动画：第一幕: GEMS 映射 (0.5秒后开始) ===
-        setTimeout(() => {
-            titleEl.innerText = getText('stage_gems_mapping');
-            container.innerHTML = ''; // 清空舞台
-            // 注意：这里的路径需要匹配您真实API的数据结构
-            const topEmotions = resultData.emotion_analysis?.top_emotions.slice(0, 5) || [];
-            topEmotions.forEach((emo, index) => {
-                const ray = document.createElement('div');
-                ray.className = 'gems-ray';
-                ray.style.setProperty('--i', index);
-                ray.style.setProperty('--score', emo[1]); // emo[1] 是分数
-                const label = document.createElement('span');
-                label.innerText = `${emo[0]} ${(emo[1] * 100).toFixed(0)}%`; // emo[0] 是名称
-                ray.appendChild(label);
-                container.appendChild(ray);
-            });
-        }, 500);
-
-        // === 恢复原版动画：第二幕: 知识图谱节点 (4秒后开始) ===
-        setTimeout(() => {
-            titleEl.innerText = getText('stage_kg_extraction');
-            container.innerHTML = ''; // 再次清空舞台
-            container.classList.add('show-kg-background');
-            const musicParams = resultData.music_parameters || {};
-            const paramsToShow = ['tempo', 'mode', 'dynamics', 'harmony', 'timbre', 'register', 'density'];
-            paramsToShow.forEach((key, index) => {
-                if (!musicParams[key]) return;
-                const param = musicParams[key];
-                const node = document.createElement('div');
-                node.className = 'param-node';
-                node.style.setProperty('--i', index);
-                node.innerHTML = `
-                    <div class="param-glyph" data-type="${key}" data-value="${param}">
-                        ${key === 'register' ? '<span></span>' : ''} 
-                    </div>
-                    <div class="param-text">
-                        <strong>${key.charAt(0).toUpperCase() + key.slice(1)}</strong>
-                        <span>${param} ${key === 'tempo' ? 'BPM' : ''}</span>
-                    </div>
-                `;
-                container.appendChild(node);
-            });
-        }, 4000);
-
-        // === 恢复原版动画：第三幕: 最终疗愈处方 (10秒后出现) ===
-        setTimeout(() => {
-            titleEl.innerText = getText('stage_prescription_generated');
-            container.innerHTML = ''; // 最终清空舞台
-            container.classList.remove('show-kg-background');
-            container.classList.add('forge-final-stage');
-
-            const summaryData = resultData.therapy_recommendation || {};
-            const summaryCard = document.createElement('div');
-            summaryCard.className = 'therapy-summary-card';
-            summaryCard.style.opacity = '0';
-            summaryCard.innerHTML = `
-                <h4>疗愈焦点: ${summaryData.primary_focus || '情绪平衡'}</h4>
-                <p>${summaryData.therapy_approach || '音乐引导疗愈'}</p>
-            `;
-            container.appendChild(summaryCard);
-
-        }, 10000);
-
-        // 动画结束后，恢复轮询
-        setTimeout(startPolling, 13500);
-    }
-    else if (data.status === 'ISO_PRINCIPLE_READY') {
+        runKgSequence(data.result.kgResult);
+        setTimeout(startPolling, 13000); 
+    } else if (data.status === 'ISO_PRINCIPLE_READY') {
         clearInterval(pollingIntervalId);
-
-        // 1. 获取所有新舞台的元素
-        const el = stages['step-iso-principle'];
-        const container = el.querySelector('#iso-animation-container');
-        const titleEl = el.querySelector('#iso-title');
-        const userWave = el.querySelector('#user-wave-path');
-        const musicWave = el.querySelector('#music-wave-path');
-        const description = el.querySelector('#iso-description-stage');
-
-        // 2. 定义波形的各种状态（SVG路径数据）
-        const userEmotionState = "M0,50 Q125,85 250,50 T500,50"; // 较为波动的状态
-        const initialMusicState = "M0,50 Q125,15 250,50 T500,50"; // 另一个不同的状态
-        const calmState = "M0,50 Q125,40 250,50 T500,50";      // 平静和谐的状态
-
-        // 3. 定义颜色
-        const userColor = "var(--text-accent)"; // 科技蓝
-        const healingColor = "#a78bfa"; // 疗愈紫
-
-        // 4. 重置舞台到初始状态
-        titleEl.innerText = data.result.isoPrinciple.title;
-        container.className = 'iso-animation-container';
-        description.className = 'iso-description-stage';
-        userWave.setAttribute('d', userEmotionState);
-        musicWave.setAttribute('d', initialMusicState);
-        userWave.style.stroke = userColor;
-        musicWave.style.stroke = userColor;
-        
         switchToStage('step-iso-principle');
-
-        // 5. 动画三幕剧开始
-        // (总时长约 12 秒)
-
-        // --- 第一幕：情绪镜象 (0.5秒后开始, 持续4秒) ---
+        const el = stages['step-iso-principle'], titleEl = el.querySelector('#iso-title'), description = el.querySelector('#iso-description-stage');
+        titleEl.innerText = getText('iso_title');
+        const container = el.querySelector('#iso-animation-container'), userWave = el.querySelector('#user-wave-path'), musicWave = el.querySelector('#music-wave-path');
+        const userEmotionState = "M0,50 Q125,85 250,50 T500,50", initialMusicState = "M0,50 Q125,15 250,50 T500,50", calmState = "M0,50 Q125,40 250,50 T500,50";
+        const userColor = "var(--text-accent)", healingColor = "#a78bfa";
+        container.className = 'iso-animation-container'; description.className = 'iso-description-stage';
+        userWave.setAttribute('d', userEmotionState); musicWave.setAttribute('d', initialMusicState);
+        userWave.style.stroke = userColor; musicWave.style.stroke = userColor;
+        setTimeout(() => { container.classList.add('iso-enter'); description.innerText = getText('iso_step1_desc'); description.classList.add('iso-text-visible'); musicWave.setAttribute('d', userEmotionState); }, 500);
+        setTimeout(() => { description.classList.remove('iso-text-visible'); setTimeout(() => { description.innerText = getText('iso_step2_desc'); description.classList.add('iso-text-visible'); }, 600); userWave.setAttribute('d', calmState); musicWave.setAttribute('d', calmState); musicWave.style.stroke = healingColor; userWave.style.stroke = healingColor; }, 4500);
+        setTimeout(() => { description.classList.remove('iso-text-visible'); setTimeout(() => { description.innerText = getText('iso_step3_desc'); description.classList.add('iso-text-visible'); }, 600); setTimeout(() => { container.classList.add('iso-exit'); description.classList.remove('iso-text-visible'); }, 2000); }, 8500);
+        // ★★★★★ 核心修改点 ★★★★★
+        // 原来的 setTimeout(startPolling, 12500) 调整为：
+        // 在ISO动画结束后（约11秒），立即切换到新的合成界面，并开始轮询。
         setTimeout(() => {
-            container.classList.add('iso-enter'); // 波形入场
-            description.innerText = getText('iso_step1_desc');
-            description.classList.add('iso-text-visible');
-
-            // 音乐波形开始同步为用户情绪波形
-            musicWave.setAttribute('d', userEmotionState);
-        }, 500);
-
-        // --- 第二幕：疗愈之桥 (4.5秒后开始, 持续4秒) ---
-        setTimeout(() => {
-            description.classList.remove('iso-text-visible'); // 旧文字淡出
-
-            setTimeout(() => { // 等待旧文字淡出后，新文字再淡入
-                 description.innerText = getText('iso_step2_desc');
-                 description.classList.add('iso-text-visible');
-            }, 600);
-           
-            // 波形开始向"平静"状态过渡，颜色也转变为"疗愈"色
-            userWave.setAttribute('d', calmState);
-            musicWave.setAttribute('d', calmState);
-            musicWave.style.stroke = healingColor;
-            userWave.style.stroke = healingColor;
-        }, 4500);
-
-        // --- 第三幕：抵达新境 (8.5秒后开始, 持续4秒) ---
-        setTimeout(() => {
-            description.classList.remove('iso-text-visible');
-
-            setTimeout(() => {
-                description.innerText = getText('iso_step3_desc');
-                description.classList.add('iso-text-visible');
-            }, 600);
-
-            // 最终，所有元素一起淡出
-            setTimeout(() => {
-                 container.classList.add('iso-exit');
-                 description.classList.remove('iso-text-visible');
-            }, 2000); // 在文字显示2秒后开始淡出
-
-        }, 8500);
-
-        // --- 剧终，准备进入下一阶段 ---
-        setTimeout(() => {
-            startPolling();
-        }, 12500); // 在总动画时间后，继续轮询
-    }
-    else if (data.status === 'VIDEO_READY') {
+            switchToStage('step-synthesis'); // 切换到新界面
+            startPolling();                 // 立刻开始轮询，让后端去处理耗时任务
+        }, 11000); // 8500ms + 2000ms + 500ms buffer = 11000ms
+        // ★★★★★★★★★★★★★★★★★★★★★
+    } else if (data.status === 'VIDEO_READY') {
         clearInterval(pollingIntervalId);
-
-        const el = stages['step-video-player'];
-        const mainTitleEl = el.querySelector('#video-main-title');
-        const subtitleEl = el.querySelector('#video-subtitle');
-        const videoPlayer = el.querySelector('#healing-video');
-        const overlay = el.querySelector('#healing-overlay');
-        const overlayText = overlay.querySelector('.breathing-text');
-
-        const { mainTitle, subtitle } = formatVideoTitle(data.result.video.title);
-        mainTitleEl.innerText = mainTitle;
-        subtitleEl.innerText = subtitle;
-
-        videoPlayer.src = data.result.video.url;
-        // ★ 核心修改 1：让视频以 0 音量开始静音播放
+        const el = stages['step-video-player'], videoPlayer = el.querySelector('#healing-video'), overlay = el.querySelector('#healing-overlay'), overlayText = overlay.querySelector('.breathing-text');
+        const videoData = data.result.video;
+        formatVideoTitle(videoData.displayNameKey, videoData.fileName);
+        videoPlayer.src = videoData.url;
         videoPlayer.volume = 0;
-        videoPlayer.play(); 
-
+        videoPlayer.play().catch(e => console.error("Autoplay was prevented:", e));
         switchToStage('step-video-player');
-
-        // --- 疗愈序章 ---
         overlayText.innerText = getText('prelude_text');
         overlay.classList.remove('d-none');
         setTimeout(() => overlay.classList.add('visible'), 100);
-
-        // 在序章视觉效果结束时，开始声音的淡入
-        setTimeout(() => {
-            overlay.classList.remove('visible');
-            // ★ 核心修改 2：调用音量淡化函数，在2.5秒内将音量从0变为1
-            fadeAudio(videoPlayer, 1, 2500);
-        }, 3500);
+        setTimeout(() => { overlay.classList.remove('visible'); fadeAudio(videoPlayer, 1, 5000); }, 3500);
     }
 }
 
-// UI核心切换函数
 function switchToStage(nextStageId) {
-    updateBackground(nextStageId); // ★ 在切换舞台时，立即调用背景更新函数 ★
-
-    return new Promise(resolve => {
-        const currentCard = stages[currentStageId];
-        const nextCard = stages[nextStageId];
-
-        if (currentCard) {
-            currentCard.classList.add('fade-out');
-            
-            // 等待淡出动画结束
-            setTimeout(() => {
-                currentCard.classList.add('d-none');
-                currentCard.classList.remove('fade-out');
-
-                nextCard.classList.remove('d-none');
-                // 触发淡入
-                setTimeout(() => {
-                    nextCard.classList.add('fade-in');
-                    currentStageId = nextStageId;
-                    resolve();
-                }, 50);
-
-            }, 600); // 必须大于或等于CSS中的动画时长
-        }
-    });
+    updateBackground(nextStageId);
+    const currentCard = stages[currentStageId]; const nextCard = stages[nextStageId];
+    if (currentCard) {
+        currentCard.classList.add('fade-out');
+        setTimeout(() => {
+            currentCard.classList.add('d-none');
+            currentCard.classList.remove('fade-out');
+            if(nextCard) { nextCard.classList.remove('d-none'); setTimeout(() => { nextCard.classList.add('fade-in'); currentStageId = nextStageId; }, 50); }
+        }, 600);
+    }
 }
 
-// 将所有内容重置回初始输入界面
 async function resetUI() {
-    // 隐藏所有非输入卡片
-    for (const key in stages) {
-        if (key !== 'step-input') {
-            stages[key].classList.add('d-none');
-            stages[key].classList.remove('fade-in');
-        }
-    }
-    // 确保输入卡片是可见的
+    for (const key in stages) { if (key !== 'step-input') { stages[key].classList.add('d-none'); stages[key].classList.remove('fade-in'); } }
     stages['step-input'].classList.remove('d-none', 'fade-out', 'fade-in');
     currentStageId = 'step-input';
-
-    // ★★★ 新增：销毁情绪雷达图实例 ★★★
-    if (emotionChart) {
-        emotionChart.destroy();
-        emotionChart = null;
-    }
-    
-    // ★★★ 新增：清理粒子效果 ★★★
-    if (particlesInstance) {
-        particlesInstance.destroy();
-        particlesInstance = null;
-    }
-
-    // 重置视频播放器
+    if (particlesInstance) { particlesInstance.destroy(); particlesInstance = null; }
     const videoPlayer = document.getElementById('healing-video');
-    videoPlayer.src = "";
-    videoPlayer.pause();
+    videoPlayer.src = ""; videoPlayer.pause();
     return Promise.resolve();
 }
 
-// ======================== 重新开始按钮功能 ========================
 restartButton.addEventListener('click', async () => {
-    // 重置UI到初始状态
     await resetUI();
-    
-    // 清空输入框
     userInput.value = '';
-    
-    // 重置按钮状态
     submitButton.disabled = false;
     submitButton.innerHTML = `<i class="fas fa-heart-pulse me-2"></i> ${getText('startJourney')}`;
-    
-    // 停止任何进行中的轮询
-    if (pollingIntervalId) {
-        clearInterval(pollingIntervalId);
-        pollingIntervalId = null;
-    }
-    
-    // 重置会话ID
+    if (pollingIntervalId) { clearInterval(pollingIntervalId); pollingIntervalId = null; }
     sessionId = null;
-
-    // ★★★ 新增的核心修复代码 ★★★
-    // 在UI重置后，重新初始化情感视界背景特效
     initializeEmotionalHorizon();
-    
-    // 聚焦到输入框
     userInput.focus();
 });
 
-// ======================== 视频播放结束逻辑 ========================
-const healingVideo = document.getElementById('healing-video');
-healingVideo.addEventListener('ended', () => {
-    console.log("视频播放结束，切换到最终选择界面。");
-    // 切换到我们新增的"结束场景"
-    switchToStage('step-conclusion');
-});
-// =================================================================
+endSessionButton.addEventListener('click', () => { stages['step-conclusion'].classList.add('fade-out'); });
 
-// ======================== 结束疗愈按钮功能 ========================
-const endSessionButton = document.getElementById('end-session-button');
-endSessionButton.addEventListener('click', () => {
-    // 简单地将最后一个卡片淡出
-    stages['step-conclusion'].classList.add('fade-out');
-});
-// =================================================================
-
-// ✅ 用这段代码，替换掉你旧的 initializeParticles 函数
 async function initializeEmotionalHorizon() {
-    if (particlesInstance) {
-        particlesInstance.destroy();
-    }
+    if (particlesInstance) { particlesInstance.destroy(); }
     try {
         particlesInstance = await tsParticles.load("particle-canvas", {
             fpsLimit: 60,
-            particles: {
-                number: { value: 120, density: { enable: true, value_area: 800 } },
-                color: { value: "#ffffff" },
-                shape: { type: "circle" },
-                opacity: { value: { min: 0.1, max: 0.4 } },
-                size: { value: { min: 1, max: 3 } },
-                links: {
-                    enable: false, 
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.3,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 0.5, 
-                    direction: "none",
-                    outModes: { default: "out" }
-                }
-            },
+            particles: { number: { value: 120, density: { enable: true, value_area: 800 } }, color: { value: "#ffffff" }, shape: { type: "circle" }, opacity: { value: { min: 0.1, max: 0.4 } }, size: { value: { min: 1, max: 3 } }, links: { enable: false }, move: { enable: true, speed: 0.5, direction: "none", outModes: { default: "out" } } },
             interactivity: { events: { onHover: { enable: true, mode: "grab" } } },
-            detectRetina: true,
-            background: { color: "transparent" }
+            detectRetina: true, background: { color: "transparent" }
         });
-        console.log('✨ Emotional Horizon initialized successfully.');
-        updateBackground('step-input'); // 初始化后立即设置一次默认状态
-    } catch (error) {
-        console.error('Error initializing Emotional Horizon:', error);
-    }
+        updateBackground('step-input');
+    } catch (error) { console.error('Error initializing Emotional Horizon:', error); }
 }
-// 确保在DOM加载后调用
 document.addEventListener('DOMContentLoaded', initializeEmotionalHorizon);
 
-// ✅ 将这个全新的函数，粘贴到 initializeEmotionalHorizon 之后
 function updateBackground(stage) {
     if (!particlesInstance) return;
-
     const root = document.documentElement;
-    let particleOptions = {};
-    let auraColors = {};
-
-    console.log(`Updating background for stage: ${stage}`);
-
+    let particleOptions = {}; let auraColors = {};
     switch (stage) {
         case 'step-emotion-analysis':
             auraColors = { '--aura-color1': '#00d4ff', '--aura-color2': '#6366f1', '--aura-color3': '#0066ff' };
-            particleOptions = { links: { enable: true, opacity: 0.4 }, move: { speed: 1.5 } };
-            break;
-        case 'step-kg-result':
-        case 'step-iso-principle':
+            particleOptions = { links: { enable: true, opacity: 0.4 }, move: { speed: 1.5 } }; break;
+        case 'step-kg-result': case 'step-iso-principle':
             auraColors = { '--aura-color1': '#a78bfa', '--aura-color2': '#34d399', '--aura-color3': '#fbbf24' };
-            particleOptions = { links: { enable: true, opacity: 0.15 }, move: { speed: 0.8 } };
-            break;
+            particleOptions = { links: { enable: true, opacity: 0.15 }, move: { speed: 0.8 } }; break;
         case 'step-video-player':
             auraColors = { '--aura-color1': '#a78bfa', '--aura-color2': '#fbbf24', '--aura-color3': '#f472b6' };
-            particleOptions = { links: { enable: false }, move: { speed: 0.3 } };
-            break;
-        case 'step-input':
-        default:
+            particleOptions = { links: { enable: false }, move: { speed: 0.3 } }; break;
+        case 'step-input': default:
             auraColors = { '--aura-color1': '#0066ff', '--aura-color2': '#8b5cf6', '--aura-color3': '#00d4ff' };
-            particleOptions = { links: { enable: false }, move: { speed: 0.5 } };
-            break;
+            particleOptions = { links: { enable: false }, move: { speed: 0.5 } }; break;
     }
-
-    // 应用颜色和粒子变化
-    for (const [key, value] of Object.entries(auraColors)) {
-        root.style.setProperty(key, value);
-    }
-    if (Object.keys(particleOptions).length > 0) {
+    for (const [key, value] of Object.entries(auraColors)) { root.style.setProperty(key, value); }
+    if (Object.keys(particleOptions).length > 0 && particlesInstance.options) {
         particlesInstance.options.particles.load(particleOptions);
         particlesInstance.refresh();
     }
 }
-// =================================================================
 
-// 3. 【新增】放在文件最底部的事件监听逻辑
-const videoPlayerForEvents = document.getElementById('healing-video');
-let epilogueTriggered = false; // 确保"尾声"只触发一次
-
+let epilogueTriggered = false;
 function startHealingEpilogue() {
     if (epilogueTriggered) return;
     epilogueTriggered = true;
-
-    const overlay = document.getElementById('healing-overlay');
-    const overlayText = overlay.querySelector('.breathing-text');
-    const videoPlayer = document.getElementById('healing-video'); // 重新获取以确保准确
-
-    // ★ 核心修改 1：在视觉淡出开始时，立即调用音量淡出函数
-    // 在4秒内将音量从当前值降到0
-    fadeAudio(videoPlayer, 0, 4000); 
-
-    // 视觉效果同步进行
-    videoPlayer.classList.add('fade-out');
+    const overlay = document.getElementById('healing-overlay'), overlayText = overlay.querySelector('.breathing-text');
+    fadeAudio(healingVideo, 0, 7000);
+    healingVideo.classList.add('fade-out');
     overlayText.innerText = getText('epilogue_text');
     overlay.classList.remove('d-none');
     setTimeout(() => overlay.classList.add('visible'), 100);
-
-    // "尾声"结束后，切换到最终选择卡片
     setTimeout(() => {
-        // ★ 核心修改 2：在所有动画结束后，暂停视频以停止播放
-        videoPlayer.pause();
+        healingVideo.pause();
         switchToStage('step-conclusion');
-        
-        // 重置所有状态... (这部分不变)
-        videoPlayer.classList.remove('fade-out');
-        videoPlayer.style.opacity = 1;
+        healingVideo.classList.remove('fade-out');
         overlay.classList.remove('visible');
         overlay.classList.add('d-none');
-        epilogueTriggered = false;
-    }, 5000); // "尾声"持续5秒
+    }, 5000);
 }
+healingVideo.addEventListener('timeupdate', () => { if (healingVideo.duration && !epilogueTriggered && (healingVideo.currentTime > healingVideo.duration - 7)) { startHealingEpilogue(); } });
+healingVideo.addEventListener('ended', startHealingEpilogue);
+healingVideo.addEventListener('loadstart', () => { epilogueTriggered = false; });
 
-// 监听播放进度，在视频结束前4秒触发"尾声"
-videoPlayerForEvents.addEventListener('timeupdate', () => {
-    if (videoPlayerForEvents.duration && videoPlayerForEvents.currentTime > videoPlayerForEvents.duration - 4) {
-        startHealingEpilogue();
-    }
-});
-
-// 为防止意外，如果视频直接结束了也触发"尾声"
-videoPlayerForEvents.addEventListener('ended', startHealingEpilogue);
-
-// 每次加载新视频时，重置触发器
-videoPlayerForEvents.addEventListener('loadstart', () => {
-    epilogueTriggered = false;
-});
-
-// ======================== 最终版情绪解码动画系统 (13.5秒总时长) ========================
-function startFinalCognitiveForgeAnimation(kgData, container, titleEl, detailsEl) {
-    console.log('🧠 开始最终版情绪解码动画 - 13.5秒总时长');
-    
-    // 清理旧元素
-    const existingElements = container.querySelectorAll('.cognitive-forge-stage');
-    existingElements.forEach(el => el.remove());
-    
-    // 获取音乐参数数据，提供更好的错误处理
-    const musicParams = kgData?.music_parameters || {};
-    const therapy = kgData?.therapy_recommendation || {};
-    
-    // 阶段1: 情绪解构 (0.5s延迟开始)
+function runKgSequence(kgResult) {
+    const animContainer = document.getElementById('kg-animation-container');
+    const cardContainer = document.getElementById('prescription-card-container');
+    animContainer.classList.remove('d-none');
+    cardContainer.classList.add('d-none');
+    cardContainer.innerHTML = '';
+    animContainer.innerHTML = `<div class="kg-animation-stage"><h5 class="kg-animation-title">${getText('stage_gems_mapping')}</h5><div class="gems-mapping-stage"><div class="music-param-node">♩</div><div class="music-param-node">♪</div><div class="music-param-node">♫</div><div class="music-param-node">♬</div><div class="music-param-node">♭</div><div class="music-param-node">♯</div></div></div>`;
     setTimeout(() => {
-        console.log('🔬 阶段1: 情绪解构 (0.5s)');
-        container.innerHTML = `
-            <div class="cognitive-forge-stage deconstruction-stage">
-                <div class="neural-network">
-                    <div class="network-node primary-node" data-emotion="主要情绪"></div>
-                    <div class="network-node secondary-node" data-emotion="次要情绪"></div>
-                    <div class="network-node tertiary-node" data-emotion="背景情绪"></div>
-                    <div class="connection-line line1"></div>
-                    <div class="connection-line line2"></div>
-                    <div class="connection-line line3"></div>
-                </div>
-                <div class="stage-label">情绪解构分析中...</div>
-            </div>
-        `;
-        
-        // 阶段2: GEMS映射 (3.5s后开始)
-        setTimeout(() => {
-            console.log('💎 阶段2: GEMS映射 (3.5s)');
-            container.innerHTML = `
-                <div class="cognitive-forge-stage gems-mapping-stage">
-                    <div class="gems-container">
-                        <div class="music-param-node tempo-node" data-value="${musicParams.tempo || '60-80 BPM'}" title="节奏">♩</div>
-                        <div class="music-param-node mode-node" data-value="${musicParams.mode || '大调'}" title="调式">♪</div>
-                        <div class="music-param-node dynamics-node" data-value="${musicParams.dynamics || '中等'}" title="动态">♫</div>
-                        <div class="music-param-node harmony-node" data-value="${musicParams.harmony || '协和'}" title="和声">♬</div>
-                        <div class="music-param-node timbre-node" data-value="${musicParams.timbre || '温暖'}" title="音色">♭</div>
-                        <div class="music-param-node register-node" data-value="${musicParams.register || '中音'}" title="音域">♯</div>
-                        <div class="music-param-node density-node" data-value="${musicParams.density || '中等'}" title="密度">♮</div>
-                    </div>
-                    <div class="stage-label">GEMS参数映射中...</div>
-                </div>
-            `;
-            
-            // 阶段3: 知识图谱提取 (6.5s后开始)
-            setTimeout(() => {
-                console.log('🕸️ 阶段3: 知识图谱提取 (6.5s)');
-                container.innerHTML = `
-                    <div class="cognitive-forge-stage knowledge-extraction-stage">
-                        <div class="kg-web">
-                            <div class="kg-node central" data-type="central">情绪核心</div>
-                            <div class="kg-node emotion" data-type="emotion">情绪分析</div>
-                            <div class="kg-node music" data-type="music">音乐参数</div>
-                            <div class="kg-node therapy" data-type="therapy">疗愈方案</div>
-                            <div class="kg-edge edge1"></div>
-                            <div class="kg-edge edge2"></div>
-                            <div class="kg-edge edge3"></div>
-                            <div class="kg-edge edge4"></div>
-                            <div class="kg-edge edge5"></div>
-                            <div class="kg-edge edge6"></div>
-                        </div>
-                        <div class="stage-label">知识图谱构建中...</div>
-                    </div>
-                `;
-                
-                // 阶段4: 疗愈处方合成 (10s后开始)
-                setTimeout(() => {
-                    console.log('💊 阶段4: 疗愈处方合成 (10s)');
-                    container.innerHTML = `
-                        <div class="cognitive-forge-stage prescription-synthesis-stage">
-                            <div class="prescription-container">
-                                <div class="prescription-icon">💊</div>
-                                <div class="synthesis-glow"></div>
-                                <div class="prescription-details">
-                                    <div class="prescription-line">焦点: ${therapy.primary_focus || '情绪平衡'}</div>
-                                    <div class="prescription-line">方法: ${therapy.therapy_approach || '音乐疗愈'}</div>
-                                    <div class="prescription-line">时长: ${therapy.session_duration || '20-30分钟'}</div>
-                                </div>
-                            </div>
-                            <div class="stage-label">疗愈处方合成完成</div>
-                        </div>
-                    `;
-                    
-                    // 动画完成后显示最终结果 (13s后)
-                    setTimeout(() => {
-                        console.log('✅ 最终版动画完成，显示结果');
-                        container.innerHTML = ''; // 清理动画容器
-                        
-                        // 显示标题
-                        titleEl.innerText = kgData.title || '疗愈处方已生成';
-                        titleEl.style.opacity = '0';
-                        titleEl.style.animation = 'fadeIn 0.5s forwards';
-                        
-                        // 显示详细信息列表
-                        const details = kgData.details || [
-                            "音乐主题: 舒缓疗愈",
-                            "建议节奏: 60-80 BPM",
-                            "调式: 大调"
-                        ];
-                        
-                        detailsEl.innerHTML = ''; // 清空现有内容
-                        details.forEach((item, index) => {
-                            const li = document.createElement('li');
-                            li.className = 'list-group-item border-0';
-                            li.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${item}`;
-                            li.style.opacity = '0';
-                            li.style.animationDelay = `${index * 0.15}s`;
-                            li.style.animation = 'fadeInUp 0.6s forwards';
-                            detailsEl.appendChild(li);
-                        });
-                        
-                    }, 3000); // 从阶段4开始后3秒显示结果
-                }, 3500); // 10s - 6.5s = 3.5s
-            }, 3000); // 6.5s - 3.5s = 3s  
-        }, 3000); // 3.5s - 0.5s = 3s
-    }, 500); // 0.5s延迟
+        animContainer.innerHTML = `<div class="kg-animation-stage"><h5 class="kg-animation-title">${getText('stage_kg_extraction')}</h5><div class="knowledge-extraction-stage"><div class="kg-node central"></div><div class="kg-node peripheral p1"></div><div class="kg-node peripheral p2"></div><div class="kg-node peripheral p3"></div><div class="kg-node peripheral p4"></div><div class="kg-node peripheral p5"></div><div class="kg-edge e1"></div><div class="kg-edge e2"></div><div class="kg-edge e3"></div><div class="kg-edge e4"></div><div class="kg-edge e5"></div></div></div>`;
+    }, 4000);
+    setTimeout(() => {
+        animContainer.innerHTML = '';
+        animContainer.classList.add('d-none');
+        cardContainer.classList.remove('d-none');
+        renderHealingPrescription(kgResult);
+    }, 8000);
 }
 
-// ========================================================================
+function renderHealingPrescription(kgResult) {
+    const container = document.getElementById('prescription-card-container');
+    if (!container) return;
+
+    const emotionAnalysis = kgResult.emotion_analysis;
+    const musicParams = kgResult.structured_params;
+    const therapy = kgResult.therapy_recommendation;
+
+    // ★★★★★ 核心修复点 ★★★★★
+    // 后端现在直接发送英文Key，所以我们直接使用它，不再需要自己拼接
+    const maxEmotionNameKey = emotionAnalysis.max_emotion[0] || 'emotion_name_unknown';
+    // ★★★★★★★★★★★★★★★★★★★
+
+    const matchedRuleKey = (kgResult.emotion_context && kgResult.emotion_context.matched_rule_key) ? kgResult.emotion_context.matched_rule_key : "default";
+    const protocolName = getText(`protocol_${matchedRuleKey}`);
+    const tempoValue = Math.round(musicParams.tempo);
+    const protocolActivatedText = getText('protocol_activated_template').replace('{protocolName}', protocolName);
+    
+    const modeText = getText(`value_${(musicParams.mode || 'neutral').toLowerCase()}`);
+    const harmonyText = getText(`value_${(musicParams.harmony || 'mixed').toLowerCase()}`);
+    const registerText = getText(`value_${(musicParams.register || 'medium').toLowerCase()}`);
+    const densityText = getText(`value_${(musicParams.density || 'medium').toLowerCase()}`);
+    const timbreText = getText(`value_${(musicParams.timbre || 'neutral_pad').replace(/ /g, '_').toLowerCase()}`);
+    
+    const rationaleText = getText(therapy.therapy_approach_key);
+
+    const cardHTML = `
+        <div class="prescription-card">
+            <div class="prescription-header">
+                <div class="icon"><i class="fas fa-file-medical-alt"></i></div>
+                <h4>
+                    ${getText('prescription_title')}
+                    <span class="prescription-pill-animation">💊</span>
+                </h4>
+                <p>${getText(maxEmotionNameKey)} - ${Math.round(emotionAnalysis.max_emotion[1] * 100)}%</p>
+                <div class="prescription-protocol">${protocolActivatedText}</div>
+            </div>
+            <div class="prescription-section">
+                <h5 class="prescription-section-title"><i class="fas fa-music"></i>${getText('section_title_params')}</h5>
+                <div class="param-grid">
+                    <div class="param-item"><div class="label">${getText('kg_param_tempo')}</div><div class="value">${tempoValue} <span>${getText('unit_bpm')}</span></div></div>
+                    <div class="param-item"><div class="label">${getText('kg_param_mode')}</div><div class="value">${modeText}</div></div>
+                    <div class="param-item"><div class="label">${getText('kg_param_timbre')}</div><div class="value">${timbreText}</div></div>
+                    <div class="param-item"><div class="label">${getText('kg_param_harmony')}</div><div class="value">${harmonyText}</div></div>
+                    <div class="param-item"><div class="label">${getText('kg_param_register')}</div><div class="value">${registerText}</div></div>
+                    <div class="param-item"><div class="label">${getText('kg_param_density')}</div><div class="value">${densityText}</div></div>
+                </div>
+            </div>
+            <div class="prescription-section">
+                <h5 class="prescription-section-title"><i class="fas fa-brain"></i>${getText('section_title_rationale')}</h5>
+                <p class="rationale-text">${rationaleText}</p>
+            </div>
+             <div class="prescription-section">
+                <h5 class="prescription-section-title"><i class="fas fa-headphones-alt"></i>${getText('section_title_practice')}</h5>
+                <p class="practice-text">${getText('practice_text_default')}</p>
+            </div>
+        </div>
+    `;
+    container.innerHTML = cardHTML;
+}

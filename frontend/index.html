@@ -7,7 +7,7 @@
     <title data-lang-zh="EmoHeal - 你的AI音乐疗愈师" data-lang-en="EmoHeal - Your AI Music Therapist">EmoHeal - 你的AI音乐疗愈师</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link id="pagestyle" href="./assets/css/argon-dashboard.min.css" rel="stylesheet" />
@@ -81,46 +81,65 @@
 
                 <!-- 知识图谱结果阶段 -->
                 <div id="step-kg-result" class="stage-card healing-card d-none">
-                    <div class="card-body p-5">
-                        <div class="text-center">
-                            <h4 id="kg-title" class="healing-title"></h4>
+                    <div class="card-body p-4 p-md-5">
+                        <div id="kg-animation-container" class="text-center">
+                            </div>
 
-                            <div id="cognitive-forge-container" class="cognitive-forge-container">
-                                </div>
-                        </div>
-
-                        <ul id="kg-details" class="healing-list list-group list-group-flush" style="background: transparent;"></ul>
+                        <div id="prescription-card-container" class="d-none">
+                            </div>
                     </div>
                 </div>
 
-                <!-- ISO原理阶段 -->
-                <div id="step-iso-principle" class="stage-card healing-card d-none">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-4">
-                            <div class="healing-icon healing-icon-iso mb-3">
-                                <i class="fas fa-project-diagram"></i> </div>
-                            <h4 id="iso-title" class="healing-title"></h4>
-                        </div>
 
-                        <div id="iso-animation-container" class="iso-animation-container">
-                            <div class="iso-waveform-wrapper" id="user-wave-wrapper">
-                                <svg viewBox="0 0 500 100" class="iso-waveform-svg">
-                                    <path id="user-wave-path" d="M0,50 Q125,80 250,50 T500,50" stroke-width="3" fill="none"/>
-                                </svg>
-                                <span class="iso-waveform-label">您的情绪</span>
-                            </div>
+                
+<div id="step-iso-principle" class="stage-card healing-card d-none">
+    <div class="card-body p-5">
+        <div class="text-center mb-4">
+            <div class="healing-icon healing-icon-iso mb-3">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <h4 id="iso-title" class="healing-title"></h4>
+        </div>
 
-                            <div class="iso-waveform-wrapper" id="music-wave-wrapper">
-                                <svg viewBox="0 0 500 100" class="iso-waveform-svg">
-                                    <path id="music-wave-path" d="M0,50 Q125,20 250,50 T500,50" stroke-width="3" fill="none"/>
-                                </svg>
-                                <span class="iso-waveform-label">疗愈音乐</span>
-                            </div>
-                        </div>
+        <div id="iso-animation-container" class="iso-animation-container">
+            <div class="iso-waveform-wrapper" id="user-wave-wrapper">
+                <svg viewBox="0 0 500 100" class="iso-waveform-svg">
+                    <path id="user-wave-path" d="M0,50 Q125,80 250,50 T500,50" stroke-width="3" fill="none"/>
+                </svg>
+                <span class="iso-waveform-label" data-lang-zh="您的情绪" data-lang-en="Your Emotion">您的情绪</span>
+            </div>
 
-                        <p id="iso-description-stage" class="iso-description-stage"></p>
-                    </div>
-                </div>
+            <div class="iso-waveform-wrapper" id="music-wave-wrapper">
+                <svg viewBox="0 0 500 100" class="iso-waveform-svg">
+                    <path id="music-wave-path" d="M0,50 Q125,20 250,50 T500,50" stroke-width="3" fill="none"/>
+                </svg>
+                <span class="iso-waveform-label" data-lang-zh="疗愈音乐" data-lang-en="Healing Music">疗愈音乐</span>
+            </div>
+        </div>
+
+        <p id="iso-description-stage" class="iso-description-stage"></p>
+    </div>
+</div>
+
+<div id="step-synthesis" class="stage-card healing-card d-none">
+    <div class="card-body p-5 text-center d-flex flex-column justify-content-center" style="min-height: 450px;">
+        <div id="synthesis-animation" class="mb-4">
+            <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="2" fill="#00d4ff">
+                    <animate attributeName="r" from="2" to="50" dur="2.5s" begin="0s" repeatCount="indefinite" values="2; 50; 50" keyTimes="0; 0.8; 1" keySplines="0.1 0.2 0.3 1; 0.1 0.2 0.3 1" calcMode="spline" />
+                    <animate attributeName="opacity" from="1" to="0" dur="2.5s" begin="0s" repeatCount="indefinite" values="1; 0; 0" keyTimes="0; 0.8; 1" keySplines="0.1 0.2 0.3 1; 0.1 0.2 0.3 1" calcMode="spline" />
+                </circle>
+                <circle cx="60" cy="60" r="2" fill="#00d4ff">
+                    <animate attributeName="r" from="2" to="50" dur="2.5s" begin="0.5s" repeatCount="indefinite" values="2; 50; 50" keyTimes="0; 0.8; 1" keySplines="0.1 0.2 0.3 1; 0.1 0.2 0.3 1" calcMode="spline" />
+                    <animate attributeName="opacity" from="1" to="0" dur="2.5s" begin="0.5s" repeatCount="indefinite" values="1; 0; 0" keyTimes="0; 0.8; 1" keySplines="0.1 0.2 0.3 1; 0.1 0.2 0.3 1" calcMode="spline" />
+                </circle>
+                <circle cx="60" cy="60" r="30" stroke="#00d4ff" stroke-width="2" fill="none" stroke-opacity="0.6"></circle>
+            </svg>
+        </div>
+        <h4 class="healing-title" data-lang-zh="正在生成专属疗愈音乐" data-lang-en="Generating Your Healing Music">正在生成专属疗愈音乐</h4>
+        <p id="synthesis-status-text" class="healing-subtitle" data-lang-zh="请稍候，AI正在同步声画能量..." data-lang-en="Please wait, AI is synchronizing audio-visual energy...">请稍候，AI正在同步声画能量...</p>
+    </div>
+</div>
 
                 <!-- 视频播放阶段 -->
                 <div id="step-video-player" class="stage-card healing-card d-none">
@@ -165,11 +184,11 @@
             </div>
         </div>
         </main>
-  
   <script src="./assets/js/core/bootstrap.bundle.min.js"></script>
   <script src="./assets/js/argon-dashboard.min.js"></script>
   
-  <!-- tsParticles库 -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery-particles@2"></script>
   
