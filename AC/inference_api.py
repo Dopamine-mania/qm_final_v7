@@ -64,13 +64,14 @@ class EmotionInferenceAPI:
         
         logger.info("✅ 情感推理API初始化完成")
     
-    def analyze_single_text(self, text: str, output_format: str = "vector") -> Union[np.ndarray, Dict[str, float], List[tuple]]:
+    def analyze_single_text(self, text: str, output_format: str = "vector", top_k: int = 7) -> Union[np.ndarray, Dict[str, float], List[tuple]]:
         """
         分析单个文本的情感
         
         Args:
             text: 输入文本
             output_format: 输出格式 ("vector", "dict", "top_k")
+            top_k: 当 output_format 为 "top_k" 时，指定返回前k个情绪的数量
             
         Returns:
             根据format返回不同格式的结果
@@ -95,7 +96,8 @@ class EmotionInferenceAPI:
             elif output_format == "dict":
                 return self.mapper.map_ck_vector_to_dict(emotion_vector)
             elif output_format == "top_k":
-                return self.mapper.get_top_emotions_from_vector(emotion_vector, 5)
+                # ★★★ 核心修改：使用传入的 top_k 参数，而不是写死的 5 ★★★
+                return self.mapper.get_top_emotions_from_vector(emotion_vector, top_k)
             else:
                 raise ValueError(f"不支持的输出格式: {output_format}")
                 

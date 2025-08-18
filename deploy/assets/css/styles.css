@@ -1,0 +1,34 @@
+/* frontend/styles.css */
+
+body {
+    transition: background-color 0.5s ease;
+}
+
+#stage-container {
+    perspective: 1000px;
+}
+
+.stage-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-style: preserve-3d;
+}
+
+/* 切换动画 */
+.stage-card.fade-out {
+    opacity: 0;
+    transform: rotateY(-30deg) scale(0.9);
+}
+
+.stage-card.fade-in {
+    opacity: 1;
+    transform: rotateY(0deg) scale(1);
+}
+
+/* 让列表项也优雅地出现 */
+#kg-details li {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}

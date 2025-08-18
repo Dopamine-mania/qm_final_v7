@@ -1,0 +1,8 @@
+1.进入存放 ngrok 文件的目录，使用以下命令：
+cd /opt/homebrew/Caskroom/ngrok/3.26.0/
+
+2.运行以下命令，将本地的 5001 端口映射到公网：
+./ngrok http 5001
+
+3.找到 Forwarding 这一行，后面那个以 https:// 开头的地址
+（例如 https://1a2b-3c4d-5e6f.ngrok-free.app）就是后端服务的公网地址。

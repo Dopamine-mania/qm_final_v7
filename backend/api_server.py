@@ -1,32 +1,37 @@
-# api_server.py (V2 - Polling Architecture)
+# api_server.py (V4 - 优化流程节奏)
 
 import uuid
 import time
+import numpy as np
 from threading import Thread
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import numpy as np
 import sys
 from pathlib import Path
+import traceback
 
-# --- 1. 添加模块路径，确保能找到你的算法模块 ---
-# (请根据你的实际文件夹结构确认路径是否正确)
+# --- 路径设置 ---
 sys.path.append(str(Path(__file__).parent.parent / "AC"))
 sys.path.append(str(Path(__file__).parent.parent / "KG"))
 sys.path.append(str(Path(__file__).parent.parent / "MI_retrieve"))
 
-# --- 2. 导入你的算法模块的"内部API" ---
+# --- 模块导入 ---
 from inference_api import EmotionInferenceAPI
 from emotion_music_bridge import EmotionMusicBridge
 from music_search_api import MusicSearchAPI
 
-# --- 3. Flask应用初始化 ---
+# --- Flask 应用初始化 ---
 app = Flask(__name__)
-# 配置CORS，允许你的前端(通常在不同端口)访问后端
-CORS(app) 
+# ★★★★★ 核心修复点 1: 采用更强大、明确的CORS配置 ★★★★★
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# --- 4. 初始化所有算法模块实例 (Level 3设计) ---
-# 在服务器启动时，就一次性加载好所有模型
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,ngrok-skip-browser-warning')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response 
+
+# --- 核心模块初始化 ---
 print("🚀 服务器启动中：正在初始化核心算法模块...")
 try:
     emotion_analyzer = EmotionInferenceAPI()
@@ -35,141 +40,109 @@ try:
     print("✅ 所有模块初始化成功！")
 except Exception as e:
     print(f"❌ 模块初始化失败: {e}")
-    # 在实际应用中，这里应该退出程序
     emotion_analyzer = kg_bridge = music_retriever = None
 
-# --- 5. 任务状态中心 ---
+# --- 任务状态存储 ---
 tasks_status = {}
 
+def make_json_safe(data):
+    if isinstance(data, dict): return {key: make_json_safe(value) for key, value in data.items()}
+    if isinstance(data, list): return [make_json_safe(element) for element in data]
+    if isinstance(data, np.integer): return int(data)
+    if isinstance(data, np.floating): return float(data)
+    if isinstance(data, np.ndarray): return data.tolist()
+    return data
 
+EMOTION_TO_KEY = {
+    "钦佩": "emotion_name_admiration", "崇拜": "emotion_name_adoration", "审美欣赏": "emotion_name_aesthetic_appreciation",
+    "娱乐": "emotion_name_amusement", "愤怒": "emotion_name_anger", "焦虑": "emotion_name_anxiety",
+    "敬畏": "emotion_name_awe", "尴尬": "emotion_name_embarrassment", "无聊": "emotion_name_boredom",
+    "平静": "emotion_name_calm", "困惑": "emotion_name_confusion", "蔑视": "emotion_name_contempt",
+    "渴望": "emotion_name_desire", "失望": "emotion_name_disappointment", "厌恶": "emotion_name_disgust",
+    "同情": "emotion_name_sympathy", "入迷": "emotion_name_entrancement", "嫉妒": "emotion_name_jealousy",
+    "兴奋": "emotion_name_excitement", "恐惧": "emotion_name_fear", "内疚": "emotion_name_guilt",
+    "恐怖": "emotion_name_horror", "兴趣": "emotion_name_interest", "快乐": "emotion_name_joy",
+    "怀旧": "emotion_name_nostalgia", "浪漫": "emotion_name_romance", "悲伤": "emotion_name_sadness"
+}
 
-
-# =================================================================
-#                     后台任务 (内部API的指挥官)
-# =================================================================
-def background_task(session_id, text, duration="3min"):
-    """
-    这个函数在独立的线程中运行，负责编排和调用所有内部API。
-    (最终完整版 V4.1 - 修复了因"能量核心"动画而跳过知识图谱阶段的问题)
-    """
+def background_task(session_id, text, duration="1min"):
     global tasks_status
-    print(f"[{session_id}] 后台任务已启动，处理文本: '{text}'")
-
+    print(f"[{session_id}] 后台任务已启动...")
     try:
-        # --- 步骤 1: 情感分析 ---
+        # === 步骤 1: 情感分析 ===
         tasks_status[session_id]['status'] = 'AC_PENDING'
-        # ... (此处代码不变)
-        top_emotions = emotion_analyzer.analyze_single_text(text, output_format='top_k')
+        top_emotions_raw = emotion_analyzer.analyze_single_text(text, output_format='top_k', top_k=7)
+        if not top_emotions_raw: top_emotions_raw = [("平静", 0.5)]
         
-        primary_emotion = top_emotions[0][0] if top_emotions else "平静"
         analysis_result_package = {
-            "title": primary_emotion,
-            "description": f"我们感受到了您内心深处的{primary_emotion}，它似乎还交织着对过往的思念...",
-            "topEmotions": [
-                {"name": emo[0], "score": float(emo[1])} for emo in top_emotions
-            ]
+            "titleKey": EMOTION_TO_KEY.get(top_emotions_raw[0][0], "emotion_name_unknown"),
+            "topEmotions": [{"nameKey": EMOTION_TO_KEY.get(emo[0], "emotion_name_unknown"), "score": float(emo[1])} for emo in top_emotions_raw]
         }
         tasks_status[session_id]['result']['analysisResult'] = analysis_result_package
         tasks_status[session_id]['status'] = 'AC_COMPLETE'
         print(f"[{session_id}] 状态更新 -> AC_COMPLETE")
-        
-        # ★★★ 关键修复 ★★★
-        # 前端在这一步会"表演"8秒，所以后端至少要停留这么久。我们设为8.5秒作为安全余量。
-        time.sleep(12) 
+        time.sleep(4)
 
-        # --- 步骤 2: 知识图谱 ---
+        # === 步骤 2: 知识图谱 ===
         tasks_status[session_id]['status'] = 'KG_PENDING'
-        # ... (此处代码不变)
         emotion_vector = emotion_analyzer.get_emotion_for_kg_module(text)
-        kg_full_result = kg_bridge.analyze_emotion_and_recommend_music(emotion_vector=emotion_vector, duration=duration, top_k=1)
+        kg_full_result = kg_bridge.get_therapy_parameters_only(emotion_vector=emotion_vector)
         
-        music_params = kg_full_result.get("music_parameters", {})
-        emotion_analysis = kg_full_result.get("emotion_analysis", {})
-        emotion_context = kg_full_result.get("emotion_context", {})
-        therapy_recommendation = kg_full_result.get("therapy_recommendation", {})
-        
-        # 构建完整的KG结果包，包含四阶段动画所需的所有数据
-        kg_result_package = {
-            "title": "疗愈处方已生成",
-            "emotion_analysis": {
-                "max_emotion": emotion_analysis.get("max_emotion", ("未知", 0.0)),
-                "top_emotions": emotion_analysis.get("top_emotions", [])
-            },
-            "music_parameters": {
-                "tempo": music_params.get("tempo", "60-80 BPM"),
-                "mode": music_params.get("mode", "大调"),
-                "dynamics": music_params.get("dynamics", "中等"),
-                "harmony": music_params.get("harmony", "协和"),
-                "timbre": music_params.get("timbre", "温暖"),
-                "register": music_params.get("register", "中音"),
-                "density": music_params.get("density", "中等"),
-                "theme": music_params.get("theme", "舒缓疗愈")
-            },
-            "emotion_context": emotion_context,
-            "therapy_recommendation": {
-                "primary_focus": therapy_recommendation.get("primary_focus", "情绪平衡"),
-                "therapy_approach": therapy_recommendation.get("therapy_approach", "音乐疗愈"),
-                "session_duration": therapy_recommendation.get("session_duration", "20-30分钟"),
-                "precautions": therapy_recommendation.get("precautions", [])
-            },
-            "details": [
-                f"音乐主题: {music_params.get('theme', '舒缓疗愈')}",
-                f"建议节奏: {music_params.get('tempo', '60-80 BPM')}",
-                f"调式: {music_params.get('mode', '大调')}"
-            ]
-        }
-        tasks_status[session_id]['result']['kgResult'] = kg_result_package
+        # ★★★★★ 核心修复点：修复 'tuple' object does not support item assignment 错误 ★★★★★
+        if kg_full_result.get("success") and kg_full_result.get("emotion_analysis"):
+            max_emotion_tuple = kg_full_result["emotion_analysis"]["max_emotion"]
+            if isinstance(max_emotion_tuple, (list, tuple)) and len(max_emotion_tuple) > 0:
+                # 1. 从旧元组中读取数据
+                chinese_name = max_emotion_tuple[0]
+                score = max_emotion_tuple[1]
+                
+                # 2. 获取对应的英文Key
+                english_key = EMOTION_TO_KEY.get(chinese_name, "emotion_name_unknown")
+                
+                # 3. 创建一个可修改的新列表
+                new_max_emotion_list = [english_key, score]
+                
+                # 4. 用这个新列表去替换整个旧的元组
+                kg_full_result["emotion_analysis"]["max_emotion"] = new_max_emotion_list
+        # ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        safe_kg_result = make_json_safe(kg_full_result)
+        tasks_status[session_id]['result']['kgResult'] = safe_kg_result
         tasks_status[session_id]['status'] = 'KG_COMPLETE'
         print(f"[{session_id}] 状态更新 -> KG_COMPLETE")
+        time.sleep(13)
 
-        # ★★★ 最终节奏同步 ★★★
-        # 前端"认知熔炉"动画总时长约13秒，我们将后端等待时间设为13.5秒。
-        time.sleep(15.5)
-
-        # --- 步骤 3: ISO原则 ---
+        # === 步骤 3: ISO原则 ===
         tasks_status[session_id]['status'] = 'ISO_PRINCIPLE_PENDING'
-        # ... (此处代码不变)
-        therapy_rec = kg_full_result.get("therapy_recommendation", {})
-        iso_principle_package = {
-            "title": f"正在应用：{therapy_rec.get('principle', '同质原理 (ISO Principle)')}",
-            "description": therapy_rec.get('explanation', "\"同质原理\"是音乐治疗的核心理念之一...")
-        }
-        tasks_status[session_id]['result']['isoPrinciple'] = iso_principle_package
+        tasks_status[session_id]['result']['isoPrinciple'] = {"titleKey": "iso_title"}
         tasks_status[session_id]['status'] = 'ISO_PRINCIPLE_READY'
         print(f"[{session_id}] 状态更新 -> ISO_PRINCIPLE_READY")
-        
-        # 前端在这一步会展示5秒，后端等待5.5秒。 (5.5s > 5s, OK)
-        time.sleep(5.5)
+        time.sleep(13)
 
-        # --- 步骤 4: 音乐检索 ---
-        # ... (此处代码不变) ...
+        # === 步骤 4: 音乐检索 ===
         tasks_status[session_id]['status'] = 'MI_PENDING'
         search_desc = kg_full_result.get("text_description", "轻松舒缓的音乐")
         music_search_result = music_retriever.search_by_description(description=search_desc, duration=duration, top_k=1)
         
         if music_search_result.get("success") and music_search_result.get("results"):
-            first_song = music_search_result["results"][0]
-            video_name = first_song.get("video_name", "unknown_video")
+            video_name = music_search_result["results"][0].get("video_name", "unknown")
             R2_PUBLIC_URL = "https://pub-263b71ccbad648af97436d9666ca337e.r2.dev"
-            full_url = f"{R2_PUBLIC_URL}/segments_{duration}/{video_name}.mp4"
-            video_package = { "url": full_url, "title": video_name }
+            video_url = f"{R2_PUBLIC_URL}/segments_{duration}/{video_name}.mp4"
+            video_package = {"url": video_url, "fileName": video_name, "displayNameKey": "video_title_generic"}
         else:
-            video_package = { "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm", "title": "疗愈之声 (备用)" }
-
+            video_package = {"url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm", "fileName": "fallback_01", "displayNameKey": "video_title_fallback"}
+        
         tasks_status[session_id]['result']['video'] = video_package
         tasks_status[session_id]['status'] = 'VIDEO_READY'
         print(f"[{session_id}] 状态更新 -> VIDEO_READY. 任务完成。")
 
     except Exception as e:
         print(f"[{session_id}] ❌ 后台任务发生错误: {e}")
+        import traceback
+        traceback.print_exc()
         tasks_status[session_id]['status'] = 'ERROR'
         tasks_status[session_id]['error_message'] = str(e)
 
-
-
-# =================================================================
-#                       外部API (前端的唯一入口)
-# =================================================================
 @app.route('/api/create_session', methods=['POST'])
 def create_session():
     text = request.json.get('text')
@@ -187,7 +160,5 @@ def get_status():
         return jsonify({'error': 'Invalid session ID'}), 404
     return jsonify(tasks_status[session_id])
 
-# -------------------- 6. 启动服务器的“点火开关” --------------------
 if __name__ == '__main__':
-    # 使用一个与常见前端开发端口不同的端口，比如5001
     app.run(host='127.0.0.1', port=5001, debug=True)

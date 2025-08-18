@@ -204,28 +204,24 @@ class GoEmotionsMapper:
             'mapping_rate': len(self.mapping) / len(self.goemotions_labels)
         }
     
-    def get_top_emotions_from_vector(self, ck_vector: np.ndarray, top_k: int = 5) -> List[Tuple[str, float]]:
+    def get_top_emotions_from_vector(self, vector: np.ndarray, k: int) -> List[tuple]:
         """
-        从C&K向量中获取top-k情绪
-        
-        Args:
-            ck_vector: 27维C&K情绪向量
-            top_k: 返回前k个情绪
+        从情感向量中获取得分最高的k个情绪
+        """
+        try:
+            # 获取向量中得分最高的k个值的索引
+            top_k_indices = np.argsort(vector)[-k:][::-1]
             
-        Returns:
-            List[Tuple[str, float]]: [(情绪名, 强度值), ...]
-        """
-        if len(ck_vector) != 27:
-            raise ValueError(f"C&K向量维度错误: 期望27维，实际{len(ck_vector)}维")
-        
-        # 获取非零情绪
-        emotion_scores = [(self.ck_emotions[i], float(ck_vector[i])) 
-                         for i in range(27) if ck_vector[i] > 0]
-        
-        # 按强度排序
-        emotion_scores.sort(key=lambda x: x[1], reverse=True)
-        
-        return emotion_scores[:top_k]
+            # ★★★ 核心修改：移除 if vector[i] > 0 的过滤条件 ★★★
+            # 这样可以确保，即使分数很低或为负，也一定能返回top_k个结果，使系统更稳定。
+            return [(self.ck_emotions[i], vector[i]) for i in top_k_indices]
+
+        except IndexError:
+            logger.error(f"❌ 索引错误: k值({k})可能大于情绪名称列表的长度({len(self.ck_emotions)})")
+            return []
+        except Exception as e:
+            logger.error(f"❌ 从向量获取Top K情绪失败: {e}")
+            return []
     
     def validate_vector(self, ck_vector: np.ndarray) -> bool:
         """

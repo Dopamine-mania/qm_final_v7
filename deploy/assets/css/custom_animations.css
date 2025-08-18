@@ -1,0 +1,32 @@
+/* custom_animations.css */
+
+/* 这是一个更平滑、更优雅的淡入动画 */
+@keyframes smoothFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* 我们将用这个class来触发动画 */
+  .step-card.is-visible {
+    animation: smoothFadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  
+  /* 给输入区域也增加一点“呼吸感”的边框光晕 */
+  #user-input:focus {
+    border-color: #5e72e4; /* Argon的主色调 */
+    box-shadow: 0 0 10px rgba(94, 114, 228, 0.5);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* 让按钮在悬停时有一个微妙的“发光”效果 */
+  #submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease-in-out;
+  }
